@@ -1,0 +1,138 @@
+:root {
+  --danger: #c0392b;
+  --safe: #2e7d32;
+  --accent: #2a5adf;
+  --bg: #fdfaf4;
+  --card: #ffffff;
+  --text: #222222;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Noto Sans KR", "Malgun Gothic", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1.6;
+}
+
+.header {
+  text-align: center;
+  padding: 28px 16px 16px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 2.2rem;
+  color: var(--accent);
+}
+
+.subtitle {
+  margin: 8px 0 0;
+  font-size: 1.1rem;
+  color: #555;
+}
+
+main {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 16px 40px;
+}
+
+section {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.golden-rules {
+  border: 3px solid var(--danger);
+}
+
+.golden-rules h2 {
+  margin-top: 0;
+  color: var(--danger);
+  font-size: 1.3rem;
+}
+
+.golden-rules ol {
+  padding-left: 1.2em;
+  margin-bottom: 0;
+}
+
+.golden-rules li {
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.checker h2 {
+  margin-top: 0;
+  font-size: 1.3rem;
+}
+
+.hint {
+  color: #555;
+  margin-top: -4px;
+}
+
+textarea {
+  width: 100%;
+  font-size: 1.1rem;
+  font-family: inherit;
+  padding: 12px;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  resize: vertical;
+}
+
+button {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 16px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #999;
+  cursor: not-allowed;
+}
+
+.result {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 10px;
+  white-space: pre-wrap;
+  font-size: 1.1rem;
+  display: none;
+}
+
+.result.visible {
+  display: block;
+  background: #f3f6ff;
+  border: 2px solid var(--accent);
+}
+
+.result.error {
+  background: #fdecea;
+  border-color: var(--danger);
+}
+
+.footer {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #666;
+  padding: 0 16px 32px;
+}

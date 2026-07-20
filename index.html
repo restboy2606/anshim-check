@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>안심체크 — 이 문자 진짜예요?</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <h1>안심체크</h1>
+    <p class="subtitle">이 문자·카톡, 사기인지 바로 확인해보세요</p>
+  </header>
+
+  <main>
+    <section class="golden-rules" aria-label="전화금융사기 3원칙">
+      <h2>⚠️ 통화 중이시라면 먼저 이것부터</h2>
+      <ol>
+        <li>정부기관·은행은 <strong>전화로 계좌번호·비밀번호를 절대 묻지 않습니다.</strong></li>
+        <li>일단 <strong>전화를 끊고</strong>, 대표번호로 직접 걸어서 확인하세요.</li>
+        <li>확실하지 않으면 통화·문자 내용을 그대로 <strong>가족에게 캡처해서 보내세요.</strong></li>
+      </ol>
+    </section>
+
+    <section class="checker">
+      <h2>📩 받은 문자·카톡이 있다면</h2>
+      <p class="hint">의심스러운 문자나 카톡 내용을 그대로 복사해서 붙여넣어 주세요.</p>
+      <form id="check-form">
+        <textarea
+          id="message-input"
+          rows="6"
+          placeholder="예) [국민건강보험공단] 환급금이 발생하였습니다. 아래 링크에서 확인하세요..."
+          required
+        ></textarea>
+        <button type="submit" id="submit-btn">확인하기</button>
+      </form>
+      <div id="result" class="result" role="status" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>이 서비스는 참고용입니다. 실제 피해가 의심되면 <strong>112(경찰)</strong> 또는 <strong>1332(금융감독원)</strong>로 신고하세요.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
