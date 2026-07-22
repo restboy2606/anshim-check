@@ -110,12 +110,20 @@ body {
   border-radius: 9px;
   display: grid;
   place-items: center;
-  font-size: 13px;
-  color: #ffd76a;
+  font-size: 15px;
+  font-weight: 900;
+  color: #ffffff;
   background: linear-gradient(160deg, #4d7fd4, #234a8a);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.35),
     0 4px 10px rgba(35, 74, 138, 0.28);
+}
+
+.brand-lockup {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+  min-width: 0;
 }
 
 .brand-name {
@@ -123,6 +131,14 @@ body {
   font-weight: 800;
   letter-spacing: -0.03em;
   color: var(--grey900);
+}
+
+.brand-tag {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--grey500);
+  margin-top: 1px;
 }
 
 .top-chip {
@@ -195,10 +211,10 @@ body {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 132px;
+  grid-template-columns: minmax(0, 1fr) 128px;
   gap: 4px;
   align-items: end;
-  min-height: 148px;
+  min-height: 176px;
 }
 
 .hero-copy {
@@ -280,18 +296,21 @@ body {
 }
 
 .mascot {
-  width: 132px;
-  height: 148px;
+  position: relative;
+  width: 128px;
+  height: 176px;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  margin-bottom: -4px;
+  margin-bottom: -6px;
   pointer-events: none;
+  overflow: visible;
 }
 
 .mascot-img {
-  width: 140px;
-  height: 140px;
+  width: 196px;
+  height: 196px;
+  margin-right: -14px;
   object-fit: contain;
   display: block;
   filter:
@@ -1080,17 +1099,17 @@ body {
 @media (max-width: 360px) {
   .hero-row {
     grid-template-columns: minmax(0, 1fr) 112px;
-    min-height: 132px;
+    min-height: 164px;
   }
 
   .mascot {
     width: 112px;
-    height: 128px;
+    height: 164px;
   }
 
   .mascot-img {
-    width: 120px;
-    height: 120px;
+    width: 176px;
+    height: 176px;
   }
 
   .title-line {
