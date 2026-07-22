@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#F4F7FF" />
+  <meta name="theme-color" content="#F4EFE6" />
   <meta name="description" content="이 문자 진짜예요? — 사기 문자 확인 + 실종아동 찾기(경찰청 안전Dream)" />
   <title>이 문자 진짜예요?</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
@@ -68,16 +68,27 @@
         </div>
 
         <form id="check-form" class="check-form">
-          <div
-            class="example-chips"
-            id="example-chips"
-            role="group"
-            aria-label="예시 문자 선택"
-          >
-            <button type="button" class="example-chip" data-example="nhis">건강보험 환급</button>
-            <button type="button" class="example-chip" data-example="delivery">택배 미수령</button>
-            <button type="button" class="example-chip" data-example="prosecutor">검찰 사칭</button>
-            <button type="button" class="example-chip" data-example="family">가족 급전</button>
+          <div class="example-block" id="example-chips">
+            <p class="example-hook">혹시 이런 문자를 받으셨나요?</p>
+            <p class="example-hint">눌러 보시면 예시가 그대로 들어가요</p>
+            <div class="example-list" role="group" aria-label="예시 문자 선택">
+              <button type="button" class="example-card" data-example="nhis">
+                <span class="example-card-kicker">문자</span>
+                <span class="example-card-preview">[국민건강보험] 환급금 32,900원이 발생했습니다. 오늘 24시 전…</span>
+              </button>
+              <button type="button" class="example-card" data-example="delivery">
+                <span class="example-card-kicker">문자</span>
+                <span class="example-card-preview">[한진택배] 배송지 오류로 반송 예정입니다. 주소·결제 정보를…</span>
+              </button>
+              <button type="button" class="example-card" data-example="prosecutor">
+                <span class="example-card-kicker">문자</span>
+                <span class="example-card-preview">[서울중앙지검] 명의 금융사기 사건 접수. 계좌 동결 예정…</span>
+              </button>
+              <button type="button" class="example-card" data-example="family">
+                <span class="example-card-kicker">카톡</span>
+                <span class="example-card-preview">엄마 핸드폰 고장나서 이 번호로 연락해. 50만원만 빨리…</span>
+              </button>
+            </div>
           </div>
 
           <textarea
@@ -115,16 +126,23 @@
           <div class="result-status-text">
             <p class="result-label">위험도</p>
             <p class="result-level" id="result-level">—</p>
+            <p class="result-ai" id="result-ai">국내 AI ‘Solar’로 살펴봤어요</p>
           </div>
         </div>
 
         <div class="result-block">
-          <h3 class="result-block-title">의심되는 이유</h3>
+          <div class="result-block-head">
+            <h3 class="result-block-title">의심되는 이유</h3>
+            <p class="result-block-sub">이 문자에서 눈에 띈 점이에요</p>
+          </div>
           <ul class="result-list" id="result-reasons"></ul>
         </div>
 
-        <div class="result-block">
-          <h3 class="result-block-title">지금 할 일</h3>
+        <div class="result-block result-block-action">
+          <div class="result-block-head">
+            <h3 class="result-block-title">지금 할 일</h3>
+            <p class="result-block-sub">지금은 이렇게 하시면 돼요</p>
+          </div>
           <ul class="result-list action" id="result-actions"></ul>
         </div>
 
@@ -141,6 +159,10 @@
           <p class="snack-sub">
             실종된 아이와 어르신이에요.<br />
             혹시 마주치면 <strong>182</strong>로 알려 주세요.
+          </p>
+          <p class="snack-public">
+            경찰청 안전Dream에 공개된 얼굴이에요.<br />
+            지나다닐 때 주변을 한 번 더 살펴봐 주세요.
           </p>
         </header>
 
@@ -171,7 +193,7 @@
           <a class="snack-btn ghost" href="tel:182">실종 신고 182</a>
         </div>
 
-        <p class="snack-source">자료 출처: 경찰청 · 무단 영리 이용 금지</p>
+        <p class="snack-source">자료 출처: 경찰청 안전Dream · 함께 찾는 마음으로 전해요</p>
       </section>
 
       <section class="card alert-card" aria-label="통화 중 필수 안내">

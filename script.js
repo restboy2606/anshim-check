@@ -109,7 +109,10 @@ function renderList(el, items, emptyText) {
   const list = items.length ? items : [emptyText];
   for (const item of list) {
     const li = document.createElement("li");
-    li.textContent = item; // XSS 방지: textContent only
+    const text = document.createElement("span");
+    text.className = "result-item-text";
+    text.textContent = item; // XSS 방지: textContent only
+    li.appendChild(text);
     el.appendChild(li);
   }
 }
@@ -119,6 +122,9 @@ function showResult(answerText) {
   const ui = LEVEL_UI[parsed.level] || LEVEL_UI.unknown;
 
   resultStatus.className = "result-status " + ui.cls;
+  if (parsed.level === "high") {
+    resultStatus.classList.add("is-alerting");
+  }
   resultEmoji.textContent = ui.emoji;
   resultLevel.textContent = ui.label;
   resultPanel.setAttribute(
@@ -126,11 +132,15 @@ function showResult(answerText) {
     `확인 결과, 위험도 ${ui.label}`
   );
 
-  renderList(resultReasons, parsed.reasons, "분석 내용을 확인해 주세요.");
+  renderList(
+    resultReasons,
+    parsed.reasons,
+    "이 문자에서 눈에 띈 점을 다시 확인해 주세요."
+  );
   renderList(
     resultActions,
     parsed.actions,
-    "가족에게 먼저 물어보거나 대표번호로 확인하세요."
+    "가족에게 먼저 물어보거나 대표번호로 확인해 보세요."
   );
 
   const weakParse = parsed.reasons.length === 0 && parsed.actions.length === 0;
@@ -409,7 +419,7 @@ function fillExample(key) {
   const end = textarea.value.length;
   textarea.setSelectionRange(end, end);
 
-  document.querySelectorAll(".example-chip").forEach((btn) => {
+  document.querySelectorAll(".example-card").forEach((btn) => {
     btn.classList.toggle("is-active", btn.dataset.example === key);
   });
 }
@@ -417,7 +427,7 @@ function fillExample(key) {
 const exampleChips = document.getElementById("example-chips");
 if (exampleChips) {
   exampleChips.addEventListener("click", (e) => {
-    const btn = e.target.closest(".example-chip");
+    const btn = e.target.closest(".example-card");
     if (!btn) return;
     fillExample(btn.dataset.example);
   });
@@ -435,7 +445,7 @@ bottomSubmit.addEventListener("click", () => {
 textarea.addEventListener("input", () => {
   updateCharCount();
   document
-    .querySelectorAll(".example-chip.is-active")
+    .querySelectorAll(".example-card.is-active")
     .forEach((btn) => btn.classList.remove("is-active"));
 });
 
