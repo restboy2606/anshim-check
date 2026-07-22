@@ -2,45 +2,214 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>안심체크 — 이 문자 진짜예요?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#F4F7FF" />
+  <meta name="description" content="이 문자 진짜예요? — 사기 문자 확인 + 실종아동 찾기(경찰청 안전Dream)" />
+  <title>이 문자 진짜예요?</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="header">
-    <h1>안심체크</h1>
-    <p class="subtitle">이 문자·카톡, 사기인지 바로 확인해보세요</p>
-  </header>
+  <div class="app">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">★</span>
+          <span class="brand-name">안심체크</span>
+        </div>
+        <span class="top-chip">Solar AI</span>
+      </div>
+    </header>
 
-  <main>
-    <section class="golden-rules" aria-label="전화금융사기 3원칙">
-      <h2>⚠️ 통화 중이시라면 먼저 이것부터</h2>
-      <ol>
-        <li>정부기관·은행은 <strong>전화로 계좌번호·비밀번호를 절대 묻지 않습니다.</strong></li>
-        <li>일단 <strong>전화를 끊고</strong>, 대표번호로 직접 걸어서 확인하세요.</li>
-        <li>확실하지 않으면 통화·문자 내용을 그대로 <strong>가족에게 캡처해서 보내세요.</strong></li>
-      </ol>
-    </section>
+    <main class="main">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-panel">
+          <p class="hero-badge">
+            <span class="badge-dot" aria-hidden="true"></span>
+            붙여넣기만 하면 1~2초
+          </p>
 
-    <section class="checker">
-      <h2>📩 받은 문자·카톡이 있다면</h2>
-      <p class="hint">의심스러운 문자나 카톡 내용을 그대로 복사해서 붙여넣어 주세요.</p>
-      <form id="check-form">
-        <textarea
-          id="message-input"
-          rows="6"
-          placeholder="예) [국민건강보험공단] 환급금이 발생하였습니다. 아래 링크에서 확인하세요..."
-          required
-        ></textarea>
-        <button type="submit" id="submit-btn">확인하기</button>
-      </form>
-      <div id="result" class="result" role="status" aria-live="polite"></div>
-    </section>
-  </main>
+          <div class="hero-row">
+            <div class="hero-copy">
+              <h1 id="page-title" class="hero-title">
+                <span class="title-line">이 문자</span>
+                <span class="title-line accent">진짜예요?</span>
+              </h1>
+              <p class="hero-lead">
+                의심스러운 문자·카톡,<br />
+                그대로 붙여넣어 확인하세요
+              </p>
+            </div>
 
-  <footer class="footer">
-    <p>이 서비스는 참고용입니다. 실제 피해가 의심되면 <strong>112(경찰)</strong> 또는 <strong>1332(금융감독원)</strong>로 신고하세요.</p>
-  </footer>
+            <div class="mascot" aria-hidden="true">
+              <img
+                class="mascot-img"
+                src="assets/mascot-officer.png"
+                width="152"
+                height="152"
+                alt=""
+                decoding="async"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card input-card" id="checker" aria-labelledby="check-title">
+        <div class="input-head">
+          <h2 id="check-title" class="input-title">문자·카톡 붙여넣기</h2>
+          <p class="input-desc">내용이 길어도 괜찮아요</p>
+        </div>
+
+        <form id="check-form" class="check-form">
+          <textarea
+            id="message-input"
+            class="field-input"
+            rows="5"
+            maxlength="2000"
+            placeholder="예) [국민건강보험] 환급금이 발생했습니다. 링크에서 확인하세요…"
+            required
+            autocomplete="off"
+            autofocus
+          ></textarea>
+
+          <div class="field-row">
+            <span class="field-hint">보낸 내용은 저장하지 않아요 · Ctrl+Enter 확인</span>
+            <span class="field-meta" id="char-meta"><span id="char-count">0</span>/2000</span>
+          </div>
+
+          <button type="submit" id="submit-btn" class="btn-primary">
+            확인하기
+          </button>
+        </form>
+      </section>
+
+      <section
+        id="result"
+        class="result-panel"
+        role="region"
+        aria-live="polite"
+        aria-atomic="true"
+        hidden
+      >
+        <div class="result-status" id="result-status">
+          <div class="result-orb" id="result-emoji" aria-hidden="true">💬</div>
+          <div class="result-status-text">
+            <p class="result-label">위험도</p>
+            <p class="result-level" id="result-level">—</p>
+          </div>
+        </div>
+
+        <div class="result-block">
+          <h3 class="result-block-title">의심되는 이유</h3>
+          <ul class="result-list" id="result-reasons"></ul>
+        </div>
+
+        <div class="result-block">
+          <h3 class="result-block-title">지금 할 일</h3>
+          <ul class="result-list action" id="result-actions"></ul>
+        </div>
+
+        <p class="result-raw" id="result-raw" hidden></p>
+      </section>
+
+      <!-- 과자 뒷면형 실종아동 보드 -->
+      <section class="snack-board" aria-labelledby="missing-title">
+        <div class="snack-seal" aria-hidden="true">함께 찾아요</div>
+
+        <header class="snack-head">
+          <p class="snack-kicker">과자 뒷면처럼 · 잠깐 봐 주세요</p>
+          <h2 id="missing-title" class="snack-title">이 아이들을 찾습니다</h2>
+          <p class="snack-sub">
+            경찰청 안전Dream 공개 정보예요.<br />
+            본 적 있으면 <strong>182</strong>로 알려 주세요.
+          </p>
+        </header>
+
+        <div id="missing-grid" class="snack-grid" aria-live="polite">
+          <div class="snack-skeleton" aria-hidden="true"></div>
+          <div class="snack-skeleton" aria-hidden="true"></div>
+          <div class="snack-skeleton" aria-hidden="true"></div>
+          <div class="snack-skeleton" aria-hidden="true"></div>
+        </div>
+
+        <p id="missing-note" class="snack-note"></p>
+
+        <div class="snack-actions">
+          <a
+            class="snack-btn primary"
+            href="https://www.safe182.go.kr/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            안전Dream에서 더 보기
+          </a>
+          <a class="snack-btn ghost" href="tel:182">실종 신고 182</a>
+        </div>
+
+        <p class="snack-source">자료 출처: 경찰청 · 무단 영리 이용 금지</p>
+      </section>
+
+      <section class="card alert-card" aria-label="통화 중 필수 안내">
+        <div class="card-head">
+          <span class="orb orb-sm orb-red" aria-hidden="true">❗</span>
+          <div>
+            <h2 class="card-title">지금 통화 중이라면</h2>
+            <p class="card-desc">확인보다 먼저 지켜주세요</p>
+          </div>
+        </div>
+        <ul class="rule-list">
+          <li>
+            <span class="rule-num">1</span>
+            <span>정부·은행은 <strong>전화로 비밀번호·계좌를 묻지 않아요</strong></span>
+          </li>
+          <li>
+            <span class="rule-num">2</span>
+            <span>일단 <strong>전화를 끊고</strong>, 대표번호로 다시 걸어요</span>
+          </li>
+          <li>
+            <span class="rule-num">3</span>
+            <span>헷갈리면 내용을 <strong>가족에게 캡처로 보내요</strong></span>
+          </li>
+        </ul>
+      </section>
+
+      <p class="mini-help">
+        급하면
+        <a href="tel:112">112</a>
+        ·
+        <a href="tel:1332">금감원 1332</a>
+        ·
+        <a href="tel:182">실종 182</a>
+      </p>
+
+      <footer class="footer">
+        <p>참고용 안내입니다. 확신이 없으면 가족·경찰·금감원에 먼저 문의하세요.</p>
+        <p class="footer-note">Upstage Solar 기반 · 토스와 무관한 독립 서비스</p>
+      </footer>
+    </main>
+
+    <div class="bottom-bar" id="bottom-bar">
+      <button type="button" id="bottom-submit" class="btn-primary">
+        확인하기
+      </button>
+    </div>
+  </div>
+
+  <div id="loading" class="loading" hidden aria-hidden="true">
+    <div class="loading-card">
+      <img
+        class="loading-mascot-img"
+        src="assets/mascot-officer.png"
+        width="88"
+        height="88"
+        alt=""
+        decoding="async"
+      />
+      <p>문자를 살펴보고 있어요</p>
+      <p class="loading-sub">보통 1~2초면 끝나요</p>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>

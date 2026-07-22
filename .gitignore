@@ -4,3 +4,8 @@ node_modules/
 
 .vercel
 vercel_dev.log
+_qa_nim.py
+_qa_nim_report.json
+_serve_local.mjs
+__pycache__/
+*.pyc

@@ -1,7 +1,7 @@
 {
   "name": "anshim-check",
-  "version": "0.1.0",
+  "version": "0.2.1",
   "private": true,
   "type": "module",
-  "description": "부모님 세대를 위한 보이스피싱 스미싱 문자 진위 확인 도구 (Upstage Solar 기반)"
+  "description": "이 문자 진짜예요? — 부모님 세대 스미싱 확인 + 실종·긴급 안내 (Upstage Solar)"
 }
