@@ -953,6 +953,9 @@ function fillExample(key) {
   document.querySelectorAll(".example-card").forEach((btn) => {
     btn.classList.toggle("is-active", btn.dataset.example === key);
   });
+
+  const coach = document.getElementById("example-coach");
+  if (coach) coach.hidden = true;
 }
 
 const exampleChips = document.getElementById("example-chips");
@@ -978,6 +981,8 @@ textarea.addEventListener("input", () => {
   document
     .querySelectorAll(".example-card.is-active")
     .forEach((btn) => btn.classList.remove("is-active"));
+  const coach = document.getElementById("example-coach");
+  if (coach && textarea.value.length > 0) coach.hidden = true;
 });
 
 if (missingPrev) missingPrev.addEventListener("click", () => goMissingPage(-1));
