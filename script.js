@@ -258,7 +258,6 @@ function renderHighlightedSource(message) {
   if (!resultSourceBody) return;
   resultSourceBody.textContent = "";
   resultSourceBody.appendChild(highlightRiskTokens(message));
-  if (resultSource) resultSource.open = false;
 }
 
 function buildShareText(parsed) {
