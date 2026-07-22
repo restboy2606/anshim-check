@@ -13,6 +13,13 @@ const resultLevel = document.getElementById("result-level");
 const resultReasons = document.getElementById("result-reasons");
 const resultActions = document.getElementById("result-actions");
 const resultRaw = document.getElementById("result-raw");
+const resultSourceBody = document.getElementById("result-source-body");
+const resultSource = document.getElementById("result-source");
+const howtoStrip = document.getElementById("howto-strip");
+const shareFamilyBtn = document.getElementById("share-family-btn");
+const ttsBtn = document.getElementById("tts-btn");
+const resetCheckBtn = document.getElementById("reset-check-btn");
+const toastEl = document.getElementById("toast");
 
 const missingTrack = document.getElementById("missing-track");
 const missingGrid = document.getElementById("missing-grid");
@@ -32,8 +39,25 @@ const LEVEL_UI = {
   unknown: { label: "확인 완료", emoji: "💬", cls: "level-unknown" },
 };
 
+const APP_URL = "https://anshim-check.vercel.app";
 const FETCH_TIMEOUT_MS = 25_000;
 let inFlight = false;
+/** @type {{ level: string, score: number|null, reasons: string[], actions: string[], raw: string, message: string } | null} */
+let lastParsed = null;
+let ttsSpeaking = false;
+let toastTimer = null;
+
+const RISK_KEYWORDS = [
+  "환급",
+  "미납",
+  "택배",
+  "인증번호",
+  "OTP",
+  "체포",
+  "이체",
+  "안전계좌",
+  "보호계좌",
+];
 
 /** 클릭 시 입력창에 채워지는 데모용 사기 문자 예시 (저작권 없는 직접 작성) */
 const EXAMPLE_MESSAGES = {
@@ -158,8 +182,216 @@ function renderList(el, items, emptyText) {
   }
 }
 
-function showResult(answerText) {
+function showToast(message) {
+  if (!toastEl) return;
+  toastEl.textContent = message;
+  toastEl.hidden = false;
+  toastEl.classList.add("is-visible");
+  if (toastTimer) window.clearTimeout(toastTimer);
+  toastTimer = window.setTimeout(() => {
+    toastEl.classList.remove("is-visible");
+    toastEl.hidden = true;
+  }, 2200);
+}
+
+function setHowtoVisible(visible) {
+  if (!howtoStrip) return;
+  howtoStrip.hidden = !visible;
+}
+
+function stopTts() {
+  if ("speechSynthesis" in window) {
+    window.speechSynthesis.cancel();
+  }
+  ttsSpeaking = false;
+  if (ttsBtn) {
+    ttsBtn.textContent = "읽어주기";
+    ttsBtn.setAttribute("aria-pressed", "false");
+  }
+}
+
+/** 위험 토큰 하이라이트 — DOM 노드만 생성 (XSS 방지) */
+function highlightRiskTokens(text) {
+  const root = document.createDocumentFragment();
+  const src = String(text || "");
+  if (!src) {
+    root.appendChild(document.createTextNode(""));
+    return root;
+  }
+
+  const keywordAlt = RISK_KEYWORDS.map((k) =>
+    k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+  ).join("|");
+
+  // URL · 전화 · 계좌형 숫자열 · 위험 키워드 (lookbehind 없이 넓은 호환)
+  const re = new RegExp(
+    [
+      "(?:https?:\\/\\/|www\\.)[^\\s<>\"']+",
+      "(?:bit\\.ly|t\\.co|goo\\.gl|tinyurl\\.com|me2\\.do|han\\.gl|url\\.kr)\\/[^\\s<>\"']+",
+      "(?:0\\d{1,2}[-).\\s]?\\d{3,4}[-.\\s]?\\d{4})",
+      "(?:\\d{3,6}[-\\s]\\d{2,6}[-\\s]\\d{2,8})",
+      "(?:\\d{10,16})",
+      keywordAlt ? `(?:${keywordAlt})` : "(?!)",
+    ].join("|"),
+    "gi"
+  );
+
+  let last = 0;
+  let m;
+  while ((m = re.exec(src)) !== null) {
+    if (m.index > last) {
+      root.appendChild(document.createTextNode(src.slice(last, m.index)));
+    }
+    const mark = document.createElement("mark");
+    mark.className = "risk-mark";
+    mark.textContent = m[0];
+    root.appendChild(mark);
+    last = m.index + m[0].length;
+  }
+  if (last < src.length) {
+    root.appendChild(document.createTextNode(src.slice(last)));
+  }
+  return root;
+}
+
+function renderHighlightedSource(message) {
+  if (!resultSourceBody) return;
+  resultSourceBody.textContent = "";
+  resultSourceBody.appendChild(highlightRiskTokens(message));
+  if (resultSource) resultSource.open = false;
+}
+
+function buildShareText(parsed) {
+  const ui = LEVEL_UI[parsed.level] || LEVEL_UI.unknown;
+  const score =
+    parsed.score != null && !Number.isNaN(parsed.score) ? parsed.score : "—";
+  const reasons = (parsed.reasons || [])
+    .slice(0, 2)
+    .map((r) => polishDisplayLine(r))
+    .filter(Boolean);
+  const reasonLine = reasons.length
+    ? `의심되는 이유: ${reasons.join(" / ")}`
+    : "의심되는 이유: 결과를 함께 확인해 주세요.";
+  const rawMsg = String(parsed.message || "").replace(/\s+/g, " ").trim();
+  const snippet =
+    rawMsg.length > 80 ? `${rawMsg.slice(0, 80)}…` : rawMsg || "(없음)";
+
+  return [
+    `[안심체크] 위험 점수 ${score}점(${ui.label})`,
+    reasonLine,
+    `원문: ${snippet}`,
+    APP_URL,
+  ].join("\n");
+}
+
+async function shareWithFamily() {
+  if (!lastParsed) {
+    showToast("먼저 문자를 확인해 주세요");
+    return;
+  }
+  const text = buildShareText(lastParsed);
+  const payload = { title: "안심체크 확인 결과", text };
+
+  try {
+    if (navigator.share) {
+      await navigator.share(payload);
+      return;
+    }
+  } catch (err) {
+    // 사용자가 공유 시트를 닫은 경우 — 조용히 종료
+    if (err && (err.name === "AbortError" || err.name === "NotAllowedError")) {
+      return;
+    }
+  }
+
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text);
+      showToast("복사됐어요");
+      return;
+    }
+  } catch {
+    /* fall through */
+  }
+
+  // 구형 폴백
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.left = "-9999px";
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    showToast("복사됐어요");
+  } catch {
+    showToast("복사에 실패했어요. 화면을 캡처해 주세요");
+  }
+}
+
+function speakResult() {
+  if (!("speechSynthesis" in window) || !ttsBtn) return;
+
+  if (ttsSpeaking) {
+    stopTts();
+    return;
+  }
+  if (!lastParsed) {
+    showToast("먼저 문자를 확인해 주세요");
+    return;
+  }
+
+  const ui = LEVEL_UI[lastParsed.level] || LEVEL_UI.unknown;
+  const score =
+    lastParsed.score != null && !Number.isNaN(lastParsed.score)
+      ? lastParsed.score
+      : "확인 중";
+  const firstAction =
+    (lastParsed.actions && lastParsed.actions[0]) ||
+    "피싱안심에스오에스 또는 1394로 상담해 보세요.";
+  const spoken = `위험 점수 ${score}점, ${ui.label}. ${polishDisplayLine(
+    firstAction
+  )}`;
+
+  stopTts();
+  const utter = new SpeechSynthesisUtterance(spoken);
+  utter.lang = "ko-KR";
+  utter.rate = 0.95;
+  utter.onend = () => stopTts();
+  utter.onerror = () => stopTts();
+  ttsSpeaking = true;
+  ttsBtn.textContent = "멈추기";
+  ttsBtn.setAttribute("aria-pressed", "true");
+  window.speechSynthesis.speak(utter);
+}
+
+function resetCheck() {
+  stopTts();
+  lastParsed = null;
+  if (textarea) {
+    textarea.value = "";
+    updateCharCount();
+  }
+  if (resultPanel) resultPanel.hidden = true;
+  if (resultSourceBody) resultSourceBody.textContent = "";
+  if (resultRaw) {
+    resultRaw.hidden = true;
+    resultRaw.textContent = "";
+  }
+  document
+    .querySelectorAll(".example-card.is-active")
+    .forEach((btn) => btn.classList.remove("is-active"));
+  setHowtoVisible(true);
+  if (textarea) textarea.focus();
+}
+
+function showResult(answerText, sourceMessage) {
   const parsed = parseAnswer(answerText);
+  parsed.message = String(sourceMessage || textarea?.value || "").trim();
+  lastParsed = parsed;
+
   const ui = LEVEL_UI[parsed.level] || LEVEL_UI.unknown;
   const score = parsed.score != null ? parsed.score : "—";
 
@@ -179,6 +411,8 @@ function showResult(answerText) {
     `확인 결과, 위험 점수 ${score}점, ${ui.label}`
   );
 
+  renderHighlightedSource(parsed.message);
+
   renderList(
     resultReasons,
     parsed.reasons,
@@ -194,20 +428,33 @@ function showResult(answerText) {
   resultRaw.hidden = !weakParse;
   resultRaw.textContent = weakParse ? parsed.raw : "";
 
+  setHowtoVisible(false);
+  stopTts();
   resultPanel.hidden = false;
   resultPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 function showError(message) {
+  lastParsed = {
+    level: "unknown",
+    score: null,
+    reasons: [message],
+    actions: ["잠시 후 다시 시도해 주세요."],
+    raw: message,
+    message: String(textarea?.value || "").trim(),
+  };
   resultStatus.className = "result-status level-unknown";
   resultEmoji.textContent = "❗";
   if (resultScoreEl) resultScoreEl.textContent = "—";
   resultLevel.textContent = "실패";
   if (resultScoreFill) resultScoreFill.style.width = "0%";
   resultPanel.setAttribute("aria-label", "확인 실패");
+  renderHighlightedSource(lastParsed.message);
   renderList(resultReasons, [message], message);
   renderList(resultActions, ["잠시 후 다시 시도해 주세요."], "");
   resultRaw.hidden = true;
+  setHowtoVisible(false);
+  stopTts();
   resultPanel.hidden = false;
   resultPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
@@ -239,6 +486,7 @@ async function runCheck() {
 
   setBusy(true);
   resultPanel.hidden = true;
+  stopTts();
 
   try {
     const { res, data } = await fetchJson("/api/analyze", {
@@ -249,7 +497,7 @@ async function runCheck() {
     if (!res.ok) {
       throw new Error(data.error || "오류가 발생했습니다.");
     }
-    showResult(data.answer || "");
+    showResult(data.answer || "", message);
   } catch (err) {
     if (err?.name === "AbortError") {
       showError("확인이 오래 걸려 중단됐어요. 다시 한 번 눌러 주세요.");
@@ -737,6 +985,25 @@ if (missingPrev) missingPrev.addEventListener("click", () => goMissingPage(-1));
 if (missingNext) missingNext.addEventListener("click", () => goMissingPage(1));
 bindMissingSwipe();
 
+if (shareFamilyBtn) {
+  shareFamilyBtn.addEventListener("click", () => {
+    shareWithFamily();
+  });
+}
+if (resetCheckBtn) {
+  resetCheckBtn.addEventListener("click", () => {
+    resetCheck();
+  });
+}
+if (ttsBtn) {
+  if ("speechSynthesis" in window) {
+    ttsBtn.hidden = false;
+    ttsBtn.addEventListener("click", () => speakResult());
+  } else {
+    ttsBtn.hidden = true;
+  }
+}
+
 // Ctrl/Cmd+Enter 로 바로 확인
 textarea.addEventListener("keydown", (e) => {
   if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
@@ -745,6 +1012,16 @@ textarea.addEventListener("keydown", (e) => {
   }
 });
 
+function registerServiceWorker() {
+  if (!("serviceWorker" in navigator)) return;
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(() => {
+      /* 오프라인 캐시 실패해도 본 기능은 동작 */
+    });
+  });
+}
+registerServiceWorker();
+
 window.addEventListener("load", () => {
   try {
     textarea.focus({ preventScroll: true });
@@ -752,6 +1029,7 @@ window.addEventListener("load", () => {
     textarea.focus();
   }
   updateCharCount();
+  setHowtoVisible(true);
   loadMissingBoard();
   startMissingRefreshLoop();
 });
