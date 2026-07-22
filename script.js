@@ -121,9 +121,28 @@ function extractBullets(text, startRe, endRe) {
       (l) =>
         l &&
         !/^위험도/.test(l) &&
+        !/^위험점수/.test(l) &&
         !/^의심되는/.test(l) &&
         !/^지금\s*할\s*일/.test(l)
-    );
+    )
+    .map(polishDisplayLine);
+}
+
+/** 화면용 문장 정리 — 의미는 유지, 읽기 리듬만 맞춤 */
+function polishDisplayLine(raw) {
+  let s = String(raw || "").trim();
+  if (!s) return s;
+  // 과도한 가운뎃점 나열 → 쉼표 리듬
+  s = s.replace(/\s*·\s*/g, ", ");
+  s = s.replace(/\s{2,}/g, " ");
+  s = s.replace(/,{2,}/g, ",");
+  s = s.replace(/,\s*,/g, ", ");
+  // URL 전문은 짧게
+  s = s.replace(/https?:\/\/[^\s]+/gi, "피싱안심SOS");
+  s = s.replace(/counterscam112\.go\.kr[^\s]*/gi, "피싱안심SOS");
+  // 끝 공백·중복 종결
+  s = s.replace(/\s+([.。!?？])/g, "$1").trim();
+  return s;
 }
 
 function renderList(el, items, emptyText) {
@@ -133,7 +152,7 @@ function renderList(el, items, emptyText) {
     const li = document.createElement("li");
     const text = document.createElement("span");
     text.className = "result-item-text";
-    text.textContent = item; // XSS 방지: textContent only
+    text.textContent = polishDisplayLine(item); // XSS 방지: textContent only
     li.appendChild(text);
     el.appendChild(li);
   }
