@@ -708,6 +708,52 @@ body {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   min-height: 120px;
+  transition: opacity 0.16s ease;
+}
+
+.snack-grid.is-fading {
+  opacity: 0;
+}
+
+/* 캐러셀 컨트롤 — 이전/다음 화살표 + 위치 표시 */
+.snack-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.snack-nav {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid #e0c07a;
+  background: rgba(255, 255, 255, 0.85);
+  color: #6b4a22;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.1s ease, background 0.15s ease;
+}
+
+.snack-nav:active {
+  transform: scale(0.92);
+  background: #fff;
+}
+
+.snack-counter {
+  min-width: 52px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: #6b4a22;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
 }
 
 .snack-skeleton {

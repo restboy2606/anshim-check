@@ -16,6 +16,10 @@ const resultRaw = document.getElementById("result-raw");
 
 const missingGrid = document.getElementById("missing-grid");
 const missingNote = document.getElementById("missing-note");
+const missingPrev = document.getElementById("missing-prev");
+const missingNext = document.getElementById("missing-next");
+const missingCounter = document.getElementById("missing-counter");
+const missingControls = document.getElementById("missing-controls");
 
 const LEVEL_UI = {
   high: { label: "높음", emoji: "🚨", cls: "level-high" },
@@ -222,65 +226,123 @@ function renderMissingEmpty(message, needKey) {
   `;
   missingGrid.appendChild(empty);
   missingNote.textContent = "자료 출처: 경찰청";
+  stopMissingAuto();
+  if (missingControls) missingControls.hidden = true;
+}
+
+// ---- 실종보드 캐러셀 상태 ----
+const MISSING_PAGE_SIZE = 4;
+const MISSING_AUTO_MS = 7000;
+let missingItems = [];
+let missingPage = 0;
+let missingTimer = null;
+const prefersReducedMotion =
+  window.matchMedia &&
+  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function missingPageCount() {
+  return Math.max(1, Math.ceil(missingItems.length / MISSING_PAGE_SIZE));
+}
+
+function buildMissingCard(item) {
+  const card = document.createElement("a");
+  card.className = "snack-card";
+  card.href = item.detailUrl || "https://www.safe182.go.kr/";
+  card.target = "_blank";
+  card.rel = "noopener noreferrer";
+  card.setAttribute(
+    "aria-label",
+    `${item.name} 실종 정보, 안전Dream에서 자세히 보기`
+  );
+
+  const photo = document.createElement("div");
+  photo.className = "snack-photo";
+  if (item.photoUrl) {
+    const img = document.createElement("img");
+    img.src = item.photoUrl;
+    img.alt = `${item.name} 공개 사진`;
+    img.loading = "lazy";
+    img.referrerPolicy = "no-referrer";
+    img.onerror = () => {
+      photo.classList.add("no-photo");
+      photo.textContent = "사진 없음";
+      img.remove();
+    };
+    photo.appendChild(img);
+  } else {
+    photo.classList.add("no-photo");
+    photo.textContent = "사진 없음";
+  }
+
+  const badge = badgeFor(item.targetCode, item.target);
+  const meta = document.createElement("div");
+  meta.className = "snack-meta";
+  meta.innerHTML = `
+    <span class="snack-badge ${badge.cls}">${escapeHtml(badge.label)}</span>
+    <p class="snack-name">${escapeHtml(item.name)}</p>
+    <p class="snack-line">${escapeHtml(
+      [item.sex, item.ageNow ? `지금 ${item.ageNow}세` : ""]
+        .filter(Boolean)
+        .join(" · ")
+    )}</p>
+    <p class="snack-line dim">${escapeHtml(
+      [formatDate(item.date), item.place].filter(Boolean).join(" · ")
+    )}</p>
+  `;
+
+  card.appendChild(photo);
+  card.appendChild(meta);
+  return card;
+}
+
+function renderMissingPage(page) {
+  const count = missingPageCount();
+  missingPage = ((page % count) + count) % count; // wrap
+  const start = missingPage * MISSING_PAGE_SIZE;
+  const slice = missingItems.slice(start, start + MISSING_PAGE_SIZE);
+
+  missingGrid.classList.add("is-fading");
+  window.setTimeout(() => {
+    missingGrid.innerHTML = "";
+    slice.forEach((item) => missingGrid.appendChild(buildMissingCard(item)));
+    missingGrid.classList.remove("is-fading");
+  }, 160);
+
+  if (missingCounter) {
+    missingCounter.textContent = `${missingPage + 1} / ${count}`;
+  }
+  if (missingControls) missingControls.hidden = count <= 1;
+}
+
+function stopMissingAuto() {
+  if (missingTimer) {
+    window.clearInterval(missingTimer);
+    missingTimer = null;
+  }
+}
+
+function startMissingAuto() {
+  stopMissingAuto();
+  if (prefersReducedMotion || missingPageCount() <= 1) return;
+  missingTimer = window.setInterval(
+    () => renderMissingPage(missingPage + 1),
+    MISSING_AUTO_MS
+  );
+}
+
+// 사용자가 화살표를 누르면 자동전환을 잠시 멈췄다 재개
+function goMissingPage(delta) {
+  stopMissingAuto();
+  renderMissingPage(missingPage + delta);
+  startMissingAuto();
 }
 
 function renderMissingItems(items) {
-  missingGrid.innerHTML = "";
-  const slice = items.slice(0, 6);
-
-  for (const item of slice) {
-    const card = document.createElement("a");
-    card.className = "snack-card";
-    card.href = item.detailUrl || "https://www.safe182.go.kr/";
-    card.target = "_blank";
-    card.rel = "noopener noreferrer";
-    card.setAttribute(
-      "aria-label",
-      `${item.name} 실종 정보, 안전Dream에서 자세히 보기`
-    );
-
-    const photo = document.createElement("div");
-    photo.className = "snack-photo";
-
-    if (item.photoUrl) {
-      const img = document.createElement("img");
-      img.src = item.photoUrl;
-      img.alt = `${item.name} 공개 사진`;
-      img.loading = "lazy";
-      img.referrerPolicy = "no-referrer";
-      img.onerror = () => {
-        photo.classList.add("no-photo");
-        photo.textContent = "사진 없음";
-        img.remove();
-      };
-      photo.appendChild(img);
-    } else {
-      photo.classList.add("no-photo");
-      photo.textContent = "사진 없음";
-    }
-
-    const badge = badgeFor(item.targetCode, item.target);
-    const meta = document.createElement("div");
-    meta.className = "snack-meta";
-    meta.innerHTML = `
-      <span class="snack-badge ${badge.cls}">${escapeHtml(badge.label)}</span>
-      <p class="snack-name">${escapeHtml(item.name)}</p>
-      <p class="snack-line">${escapeHtml(
-        [item.sex, item.ageNow ? `지금 ${item.ageNow}세` : ""]
-          .filter(Boolean)
-          .join(" · ")
-      )}</p>
-      <p class="snack-line dim">${escapeHtml(
-        [formatDate(item.date), item.place].filter(Boolean).join(" · ")
-      )}</p>
-    `;
-
-    card.appendChild(photo);
-    card.appendChild(meta);
-    missingGrid.appendChild(card);
-  }
-
-  missingNote.textContent = `자료 출처: 경찰청 · ${slice.length}명 표시`;
+  missingItems = items;
+  missingPage = 0;
+  renderMissingPage(0);
+  startMissingAuto();
+  missingNote.textContent = `자료 출처: 경찰청 · 총 ${items.length}명`;
 }
 
 async function loadMissingBoard() {
@@ -330,6 +392,9 @@ bottomSubmit.addEventListener("click", () => {
 });
 
 textarea.addEventListener("input", updateCharCount);
+
+if (missingPrev) missingPrev.addEventListener("click", () => goMissingPage(-1));
+if (missingNext) missingNext.addEventListener("click", () => goMissingPage(1));
 
 // Ctrl/Cmd+Enter 로 바로 확인
 textarea.addEventListener("keydown", (e) => {

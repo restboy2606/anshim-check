@@ -90,7 +90,7 @@ export default async function handler(req, res) {
     const body = new URLSearchParams();
     body.set("esntlId", esntlId);
     body.set("authKey", authKey);
-    body.set("rowSize", "6");
+    body.set("rowSize", "24");
     body.set("page", "1");
     // 실종 취약계층 전반: 아동·시설보호무연고·지적장애·치매 (부모님 세대 공감 + 자연스러운 다양성)
     body.append("writngTrgetDscds", "010"); // 아동
