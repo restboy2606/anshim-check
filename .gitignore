@@ -12,3 +12,7 @@ __pycache__/
 
 _qa_nim_score_*
 
+
+assets/_counterscam_*
+_tmp_*
+

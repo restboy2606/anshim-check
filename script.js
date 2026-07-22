@@ -168,7 +168,7 @@ function showResult(answerText) {
   renderList(
     resultActions,
     parsed.actions,
-    "피싱안심SOS나 112로 확인해 보세요."
+    "피싱안심SOS 또는 1394로 상담해 보세요."
   );
 
   const weakParse = parsed.reasons.length === 0 && parsed.actions.length === 0;
@@ -599,33 +599,71 @@ function renderMissingItems(items) {
   missingNote.textContent = `자료 출처: 경찰청 · 총 ${items.length}명`;
 }
 
-async function loadMissingBoard() {
+// 실종 목록: 페이지 로드 1회 + 5분마다 + 탭 복귀 시 새로고침 (API page 순환)
+const MISSING_REFRESH_MS = 5 * 60 * 1000;
+let missingApiPage = 1;
+let missingRefreshTimer = null;
+let missingLoading = false;
+
+async function loadMissingBoard({ silent = false } = {}) {
+  if (missingLoading) return;
+  missingLoading = true;
   try {
-    const { res, data } = await fetchJson("/api/missing", {}, 15_000);
+    const qs = `page=${missingApiPage}&_=${Date.now()}`;
+    const { res, data } = await fetchJson(
+      `/api/missing?${qs}`,
+      { cache: "no-store", headers: { "Cache-Control": "no-cache" } },
+      15_000
+    );
     if (!res.ok) {
-      renderMissingEmpty(
-        data.error || "지금은 목록을 불러오지 못했어요.",
-        false
-      );
+      if (!silent) {
+        renderMissingEmpty(
+          data.error || "지금은 목록을 불러오지 못했어요.",
+          false
+        );
+      }
       return;
     }
 
     if (data.ok && Array.isArray(data.items) && data.items.length) {
       renderMissingItems(data.items);
+      // 다음 갱신 때 다른 페이지 후보
+      missingApiPage = missingApiPage >= 4 ? 1 : missingApiPage + 1;
       return;
     }
 
-    renderMissingEmpty(
-      data.message ||
-        "지금은 목록을 불러오지 못했어요. 안전Dream에서 직접 확인해 주세요.",
-      Boolean(data.needKey)
-    );
+    // 빈 페이지면 1페이지로 되돌리고 한 번 더 시도하지 않음(루프 방지)
+    if (!silent) {
+      renderMissingEmpty(
+        data.message ||
+          "지금은 목록을 불러오지 못했어요. 안전Dream에서 직접 확인해 주세요.",
+        Boolean(data.needKey)
+      );
+    }
+    missingApiPage = 1;
   } catch {
-    renderMissingEmpty(
-      "연결이 불안정해요. 안전Dream 홈페이지에서 확인해 주세요.",
-      false
-    );
+    if (!silent) {
+      renderMissingEmpty(
+        "연결이 불안정해요. 안전Dream 홈페이지에서 확인해 주세요.",
+        false
+      );
+    }
+  } finally {
+    missingLoading = false;
   }
+}
+
+function startMissingRefreshLoop() {
+  if (missingRefreshTimer) window.clearInterval(missingRefreshTimer);
+  missingRefreshTimer = window.setInterval(() => {
+    loadMissingBoard({ silent: true });
+  }, MISSING_REFRESH_MS);
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      loadMissingBoard({ silent: true });
+    }
+  });
 }
 
 function updateCharCount() {
@@ -696,4 +734,5 @@ window.addEventListener("load", () => {
   }
   updateCharCount();
   loadMissingBoard();
+  startMissingRefreshLoop();
 });

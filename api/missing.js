@@ -63,13 +63,33 @@ function normalizeItem(raw, index) {
   };
 }
 
+function noStore(res) {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+  res.setHeader("Pragma", "no-cache");
+}
+
+function parsePage(req) {
+  try {
+    const rawUrl = req.url || "/";
+    const u = new URL(rawUrl, "http://localhost");
+    const n = Number(u.searchParams.get("page") || "1");
+    if (!Number.isFinite(n) || n < 1) return 1;
+    return Math.min(10, Math.floor(n));
+  } catch {
+    return 1;
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== "GET") {
     return res.status(405).json({ error: "GET만 지원합니다." });
   }
 
+  noStore(res);
+
   const esntlId = process.env.SAFE182_ESNTL_ID;
   const authKey = process.env.SAFE182_AUTH_KEY;
+  const page = parsePage(req);
 
   if (!esntlId || !authKey) {
     return res.status(200).json({
@@ -91,7 +111,7 @@ export default async function handler(req, res) {
     body.set("esntlId", esntlId);
     body.set("authKey", authKey);
     body.set("rowSize", "16");
-    body.set("page", "1");
+    body.set("page", String(page));
     // 실종 취약계층 전반: 아동·시설보호무연고·지적장애·치매 (부모님 세대 공감 + 자연스러운 다양성)
     body.append("writngTrgetDscds", "010"); // 아동
     body.append("writngTrgetDscds", "040"); // 시설보호무연고
@@ -107,8 +127,10 @@ export default async function handler(req, res) {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
           Accept: "application/json,text/plain,*/*",
+          "Cache-Control": "no-cache",
         },
         body,
+        cache: "no-store",
       }
     );
 
@@ -135,6 +157,7 @@ export default async function handler(req, res) {
         items: [],
         message: data.msg || "조회에 실패했습니다.",
         result: data.result,
+        page,
       });
     }
 
@@ -149,6 +172,8 @@ export default async function handler(req, res) {
       portal: "https://www.safe182.go.kr/",
       call: "182",
       totalCount: data.totalCount ?? items.length,
+      page,
+      fetchedAt: new Date().toISOString(),
       items,
     });
   } catch (err) {
