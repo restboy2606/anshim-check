@@ -14,12 +14,16 @@ const resultReasons = document.getElementById("result-reasons");
 const resultActions = document.getElementById("result-actions");
 const resultRaw = document.getElementById("result-raw");
 
+const missingTrack = document.getElementById("missing-track");
 const missingGrid = document.getElementById("missing-grid");
+const missingStage = document.getElementById("missing-stage");
 const missingNote = document.getElementById("missing-note");
 const missingPrev = document.getElementById("missing-prev");
 const missingNext = document.getElementById("missing-next");
 const missingCounter = document.getElementById("missing-counter");
 const missingControls = document.getElementById("missing-controls");
+const resultScoreEl = document.getElementById("result-score");
+const resultScoreFill = document.getElementById("result-score-fill");
 
 const LEVEL_UI = {
   high: { label: "높음", emoji: "🚨", cls: "level-high" },
@@ -64,14 +68,32 @@ function setBusy(busy) {
   }
 }
 
+function levelFromScore(score) {
+  if (score == null || Number.isNaN(score)) return null;
+  if (score <= 29) return "low";
+  if (score <= 69) return "mid";
+  return "high";
+}
+
 function parseAnswer(text) {
   const raw = String(text || "").trim();
+  const scoreMatch = raw.match(/위험점수\s*[:：]\s*(\d{1,3})/);
+  let score = scoreMatch ? Math.min(100, Math.max(0, Number(scoreMatch[1]))) : null;
+
   const levelMatch = raw.match(/위험도\s*[:：]\s*(높음|중간|낮음)/);
   let level = "unknown";
   if (levelMatch) {
     if (levelMatch[1] === "높음") level = "high";
     else if (levelMatch[1] === "중간") level = "mid";
     else if (levelMatch[1] === "낮음") level = "low";
+  }
+
+  // 점수가 있으면 점수 구간이 우선 (모델 불일치 보정)
+  const fromScore = levelFromScore(score);
+  if (fromScore) level = fromScore;
+  // 점수 없고 위험도만 있으면 대표 점수 부여
+  if (score == null && level !== "unknown") {
+    score = level === "high" ? 85 : level === "mid" ? 50 : 10;
   }
 
   const reasons = extractBullets(
@@ -81,7 +103,7 @@ function parseAnswer(text) {
   );
   const actions = extractBullets(raw, /지금\s*할\s*일\s*[:：]?/, null);
 
-  return { level, reasons, actions, raw };
+  return { level, score, reasons, actions, raw };
 }
 
 function extractBullets(text, startRe, endRe) {
@@ -120,27 +142,33 @@ function renderList(el, items, emptyText) {
 function showResult(answerText) {
   const parsed = parseAnswer(answerText);
   const ui = LEVEL_UI[parsed.level] || LEVEL_UI.unknown;
+  const score = parsed.score != null ? parsed.score : "—";
 
   resultStatus.className = "result-status " + ui.cls;
   if (parsed.level === "high") {
     resultStatus.classList.add("is-alerting");
   }
   resultEmoji.textContent = ui.emoji;
+  if (resultScoreEl) resultScoreEl.textContent = String(score);
   resultLevel.textContent = ui.label;
+  if (resultScoreFill) {
+    const pct = typeof score === "number" ? score : 0;
+    resultScoreFill.style.width = `${pct}%`;
+  }
   resultPanel.setAttribute(
     "aria-label",
-    `확인 결과, 위험도 ${ui.label}`
+    `확인 결과, 위험 점수 ${score}점, ${ui.label}`
   );
 
   renderList(
     resultReasons,
     parsed.reasons,
-    "이 문자에서 눈에 띈 점을 다시 확인해 주세요."
+    "이 연락에서 눈에 띈 점을 다시 확인해 주세요."
   );
   renderList(
     resultActions,
     parsed.actions,
-    "가족에게 먼저 물어보거나 대표번호로 확인해 보세요."
+    "피싱안심SOS나 112로 확인해 보세요."
   );
 
   const weakParse = parsed.reasons.length === 0 && parsed.actions.length === 0;
@@ -154,7 +182,9 @@ function showResult(answerText) {
 function showError(message) {
   resultStatus.className = "result-status level-unknown";
   resultEmoji.textContent = "❗";
-  resultLevel.textContent = "확인 실패";
+  if (resultScoreEl) resultScoreEl.textContent = "—";
+  resultLevel.textContent = "실패";
+  if (resultScoreFill) resultScoreFill.style.width = "0%";
   resultPanel.setAttribute("aria-label", "확인 실패");
   renderList(resultReasons, [message], message);
   renderList(resultActions, ["잠시 후 다시 시도해 주세요."], "");
@@ -239,7 +269,11 @@ function escapeHtml(str) {
 }
 
 function renderMissingEmpty(message, needKey) {
-  missingGrid.innerHTML = "";
+  if (!missingTrack) return;
+  stopMissingAuto();
+  missingTrack.innerHTML = "";
+  const page = document.createElement("div");
+  page.className = "snack-page";
   const empty = document.createElement("div");
   empty.className = "snack-empty";
   empty.innerHTML = `
@@ -251,24 +285,33 @@ function renderMissingEmpty(message, needKey) {
         : ""
     }
   `;
-  missingGrid.appendChild(empty);
+  page.appendChild(empty);
+  missingTrack.appendChild(page);
+  missingTrack.style.transform = "translate3d(0,0,0)";
   missingNote.textContent = "자료 출처: 경찰청";
-  stopMissingAuto();
   if (missingControls) missingControls.hidden = true;
+  const swipeHint = document.getElementById("missing-swipe-hint");
+  if (swipeHint) swipeHint.hidden = true;
 }
 
-// ---- 실종보드 캐러셀 상태 ----
+// ---- 실종보드 앨범형 캐러셀 ----
 const MISSING_PAGE_SIZE = 4;
 const MISSING_AUTO_MS = 7000;
 let missingItems = [];
 let missingPage = 0;
 let missingTimer = null;
+let missingDragX = 0;
+let missingAnimating = false;
 const prefersReducedMotion =
   window.matchMedia &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 function missingPageCount() {
   return Math.max(1, Math.ceil(missingItems.length / MISSING_PAGE_SIZE));
+}
+
+function stageWidth() {
+  return (missingStage && missingStage.clientWidth) || 1;
 }
 
 function buildMissingCard(item) {
@@ -289,6 +332,7 @@ function buildMissingCard(item) {
     img.src = item.photoUrl;
     img.alt = `${item.name} 공개 사진`;
     img.loading = "lazy";
+    img.draggable = false;
     img.referrerPolicy = "no-referrer";
     img.onerror = () => {
       photo.classList.add("no-photo");
@@ -322,19 +366,49 @@ function buildMissingCard(item) {
   return card;
 }
 
-function renderMissingPage(page) {
-  const count = missingPageCount();
-  missingPage = ((page % count) + count) % count; // wrap
-  const start = missingPage * MISSING_PAGE_SIZE;
-  const slice = missingItems.slice(start, start + MISSING_PAGE_SIZE);
+function setTrackOffset(pageIndex, dragPx, animate) {
+  if (!missingTrack) return;
+  const w = stageWidth();
+  const x = -pageIndex * w + (dragPx || 0);
+  missingTrack.style.transition = animate
+    ? "transform 0.32s cubic-bezier(0.22, 0.9, 0.28, 1)"
+    : "none";
+  missingTrack.style.transform = `translate3d(${x}px, 0, 0)`;
+}
 
-  missingGrid.classList.add("is-fading");
-  window.setTimeout(() => {
-    missingGrid.innerHTML = "";
-    slice.forEach((item) => missingGrid.appendChild(buildMissingCard(item)));
-    missingGrid.classList.remove("is-fading");
-    missingGrid.style.transform = "";
-  }, 160);
+function layoutMissingPages() {
+  if (!missingTrack || !missingStage) return;
+  const w = stageWidth();
+  const count = missingPageCount();
+  missingTrack.style.width = `${Math.max(1, count) * w}px`;
+  Array.from(missingTrack.children).forEach((el) => {
+    el.style.flex = `0 0 ${w}px`;
+    el.style.width = `${w}px`;
+    el.style.maxWidth = `${w}px`;
+  });
+}
+
+function buildMissingTrack() {
+  if (!missingTrack) return;
+  missingTrack.innerHTML = "";
+  const count = missingPageCount();
+  for (let p = 0; p < count; p++) {
+    const page = document.createElement("div");
+    page.className = "snack-page snack-grid";
+    page.setAttribute("data-page", String(p));
+    const start = p * MISSING_PAGE_SIZE;
+    const slice = missingItems.slice(start, start + MISSING_PAGE_SIZE);
+    slice.forEach((item) => page.appendChild(buildMissingCard(item)));
+    missingTrack.appendChild(page);
+  }
+  layoutMissingPages();
+}
+
+function renderMissingPage(page, { animate = true } = {}) {
+  const count = missingPageCount();
+  missingPage = ((page % count) + count) % count;
+  missingDragX = 0;
+  setTrackOffset(missingPage, 0, animate && !prefersReducedMotion);
 
   if (missingCounter) {
     missingCounter.textContent = `${missingPage + 1} / ${count}`;
@@ -355,38 +429,45 @@ function startMissingAuto() {
   stopMissingAuto();
   if (prefersReducedMotion || missingPageCount() <= 1) return;
   missingTimer = window.setInterval(
-    () => renderMissingPage(missingPage + 1),
+    () => goMissingPage(1),
     MISSING_AUTO_MS
   );
 }
 
-// 사용자가 화살표·스와이프하면 자동전환을 잠시 멈췄다 재개
 function goMissingPage(delta) {
+  if (missingAnimating) return;
   stopMissingAuto();
-  renderMissingPage(missingPage + delta);
-  startMissingAuto();
+  const count = missingPageCount();
+  if (count <= 1) return;
+  missingAnimating = true;
+  renderMissingPage(missingPage + delta, { animate: true });
+  window.setTimeout(() => {
+    missingAnimating = false;
+    startMissingAuto();
+  }, 340);
 }
 
-/** 실종보드: 손가락 좌우 스와이프로 페이지 넘김 */
+/** 앨범 앱처럼: 드래그 중 다음/이전 페이지가 같이 보임 */
 function bindMissingSwipe() {
-  const stage = document.getElementById("missing-stage") || missingGrid;
-  if (!stage || !missingGrid) return;
+  const stage = missingStage || missingTrack;
+  if (!stage || !missingTrack) return;
 
   let startX = 0;
   let startY = 0;
   let tracking = false;
-  let locked = null; // 'x' | 'y' | null
+  let locked = null;
   let didSwipe = false;
-  const THRESHOLD = 48;
+  const THRESHOLD_RATIO = 0.18;
 
   const onStart = (x, y) => {
-    if (missingPageCount() <= 1) return;
+    if (missingPageCount() <= 1 || missingAnimating) return;
     startX = x;
     startY = y;
     tracking = true;
     locked = null;
     didSwipe = false;
-    missingGrid.classList.add("is-swiping");
+    stopMissingAuto();
+    missingTrack.classList.add("is-dragging");
   };
 
   const onMove = (x, y, e) => {
@@ -394,29 +475,59 @@ function bindMissingSwipe() {
     const dx = x - startX;
     const dy = y - startY;
     if (!locked) {
-      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
       locked = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+      if (locked === "y") {
+        tracking = false;
+        missingTrack.classList.remove("is-dragging");
+        return;
+      }
     }
-    if (locked === "y") return;
+    if (locked !== "x") return;
     if (e && e.cancelable) e.preventDefault();
-    const damp = Math.max(-80, Math.min(80, dx * 0.35));
-    missingGrid.style.transform = `translateX(${damp}px)`;
+    // 가장자리 저항감 (앨범 느낌)
+    const count = missingPageCount();
+    let drag = dx;
+    if (missingPage === 0 && drag > 0) drag *= 0.35;
+    if (missingPage === count - 1 && drag < 0) drag *= 0.35;
+    missingDragX = drag;
+    setTrackOffset(missingPage, drag, false);
   };
 
   const onEnd = (x) => {
-    if (!tracking) return;
+    if (!tracking && locked !== "x") {
+      missingTrack.classList.remove("is-dragging");
+      return;
+    }
     tracking = false;
-    missingGrid.classList.remove("is-swiping");
-    missingGrid.style.transform = "";
-    if (locked !== "x") return;
+    missingTrack.classList.remove("is-dragging");
+    if (locked !== "x") {
+      startMissingAuto();
+      return;
+    }
     const dx = x - startX;
-    if (Math.abs(dx) < THRESHOLD) return;
-    didSwipe = true;
-    // 왼쪽으로 밀면 다음, 오른쪽이면 이전
-    goMissingPage(dx < 0 ? 1 : -1);
+    const w = stageWidth();
+    const need = Math.max(40, w * THRESHOLD_RATIO);
+    let target = missingPage;
+    if (dx < -need) target = missingPage + 1;
+    else if (dx > need) target = missingPage - 1;
+
+    if (target !== missingPage) {
+      didSwipe = true;
+      missingAnimating = true;
+      renderMissingPage(target, { animate: true });
+      window.setTimeout(() => {
+        missingAnimating = false;
+        startMissingAuto();
+      }, 340);
+    } else {
+      // 원위치 스냅
+      setTrackOffset(missingPage, 0, true);
+      missingDragX = 0;
+      startMissingAuto();
+    }
   };
 
-  // 스와이프 직후 카드 링크 클릭 방지
   stage.addEventListener(
     "click",
     (e) => {
@@ -454,11 +565,10 @@ function bindMissingSwipe() {
   );
   stage.addEventListener("touchcancel", () => {
     tracking = false;
-    missingGrid.classList.remove("is-swiping");
-    missingGrid.style.transform = "";
+    missingTrack.classList.remove("is-dragging");
+    setTrackOffset(missingPage, 0, true);
   });
 
-  // 데스크톱 드래그도 지원
   let mouseDown = false;
   stage.addEventListener("mousedown", (e) => {
     mouseDown = true;
@@ -473,12 +583,18 @@ function bindMissingSwipe() {
     mouseDown = false;
     onEnd(e.clientX);
   });
+
+  window.addEventListener("resize", () => {
+    layoutMissingPages();
+    setTrackOffset(missingPage, 0, false);
+  });
 }
 
 function renderMissingItems(items) {
   missingItems = items;
   missingPage = 0;
-  renderMissingPage(0);
+  buildMissingTrack();
+  renderMissingPage(0, { animate: false });
   startMissingAuto();
   missingNote.textContent = `자료 출처: 경찰청 · 총 ${items.length}명`;
 }

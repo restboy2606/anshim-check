@@ -9,3 +9,6 @@ _qa_nim_report.json
 _serve_local.mjs
 __pycache__/
 *.pyc
+
+_qa_nim_score_*
+

@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#F4EFE6" />
-  <meta name="description" content="이 문자 진짜예요? — 사기 문자 확인 + 실종아동 찾기(경찰청 안전Dream)" />
-  <title>이 문자 진짜예요?</title>
+  <meta name="theme-color" content="#EAF1F8" />
+  <meta name="description" content="이 연락, 받아도 될까요? — 사기 문자 확인 + 실종자 찾기 (경찰청 안전Dream)" />
+  <title>안심체크 — 이 연락, 받아도 될까요?</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -17,7 +17,7 @@
           <span class="brand-mark" aria-hidden="true">✓</span>
           <span class="brand-lockup">
             <span class="brand-name">안심체크</span>
-            <span class="brand-tag">문자 사기 확인 도우미</span>
+            <span class="brand-tag">이 연락, 받아도 될까요?</span>
           </span>
         </div>
       </div>
@@ -28,22 +28,22 @@
         <div class="hero-panel">
           <p class="hero-badge">
             <span class="badge-dot" aria-hidden="true"></span>
-            가입 없이 바로 확인해요
+            가입 없이 · 바로 확인
           </p>
 
           <div class="hero-row">
             <div class="hero-copy">
               <h1 id="page-title" class="hero-title">
-                <span class="title-line">이 문자</span>
-                <span class="title-line accent">진짜예요?</span>
+                <span class="title-line">이 연락,</span>
+                <span class="title-line accent">받아도 될까요?</span>
               </h1>
               <p class="hero-lead">
-                문자가 진짜인지 헷갈리시면,<br />
-                여기에 그대로 붙여넣어 보세요
+                무심결에 받은 문자·카톡,<br />
+                한 번쯤 의심해 보셔도 괜찮아요
               </p>
               <p class="hero-trust">
                 <span class="trust-check" aria-hidden="true">✓</span>
-                왜 위험한지 알려드려요
+                위험 점수와 지금 할 일을 알려드려요
               </p>
             </div>
 
@@ -136,8 +136,15 @@
         <div class="result-status" id="result-status">
           <div class="result-orb" id="result-emoji" aria-hidden="true">💬</div>
           <div class="result-status-text">
-            <p class="result-label">위험도</p>
-            <p class="result-level" id="result-level">—</p>
+            <p class="result-label">위험 점수</p>
+            <p class="result-score-line">
+              <span class="result-level" id="result-score">—</span>
+              <span class="result-score-unit">점</span>
+              <span class="result-band" id="result-level">—</span>
+            </p>
+            <div class="result-score-bar" aria-hidden="true">
+              <div class="result-score-fill" id="result-score-fill"></div>
+            </div>
             <p class="result-ai" id="result-ai">국내 AI ‘Solar’로 살펴봤어요</p>
           </div>
         </div>
@@ -145,7 +152,7 @@
         <div class="result-block">
           <div class="result-block-head">
             <h3 class="result-block-title">의심되는 이유</h3>
-            <p class="result-block-sub">이 문자에서 눈에 띈 점이에요</p>
+            <p class="result-block-sub">이 연락에서 눈에 띈 점이에요</p>
           </div>
           <ul class="result-list" id="result-reasons"></ul>
         </div>
@@ -153,9 +160,26 @@
         <div class="result-block result-block-action">
           <div class="result-block-head">
             <h3 class="result-block-title">지금 할 일</h3>
-            <p class="result-block-sub">지금은 이렇게 하시면 돼요</p>
+            <p class="result-block-sub">미리 알고 대비하는 것이 가장 확실한 예방이에요</p>
           </div>
           <ul class="result-list action" id="result-actions"></ul>
+        </div>
+
+        <div class="result-help">
+          <p class="result-help-title">더 확실하지 않으신가요?</p>
+          <a
+            class="result-help-link"
+            href="https://www.counterscam112.go.kr/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            경찰청 피싱안심SOS에서 확인·제보
+          </a>
+          <p class="result-help-sub">
+            수상한 전화·문자는
+            <a href="https://www.counterscam112.go.kr/report/reportGuide.do?type=itg" target="_blank" rel="noopener noreferrer">간편제보</a>
+            또는 <a href="tel:112">112</a>
+          </p>
         </div>
 
         <p class="result-raw" id="result-raw" hidden></p>
@@ -183,11 +207,13 @@
           id="missing-stage"
           aria-label="실종 사진, 옆으로 밀어서 넘길 수 있어요"
         >
-          <div id="missing-grid" class="snack-grid" aria-live="polite">
-            <div class="snack-skeleton" aria-hidden="true"></div>
-            <div class="snack-skeleton" aria-hidden="true"></div>
-            <div class="snack-skeleton" aria-hidden="true"></div>
-            <div class="snack-skeleton" aria-hidden="true"></div>
+          <div class="snack-track" id="missing-track" aria-live="polite">
+            <div class="snack-page snack-grid" id="missing-grid">
+              <div class="snack-skeleton" aria-hidden="true"></div>
+              <div class="snack-skeleton" aria-hidden="true"></div>
+              <div class="snack-skeleton" aria-hidden="true"></div>
+              <div class="snack-skeleton" aria-hidden="true"></div>
+            </div>
           </div>
         </div>
 
@@ -220,7 +246,7 @@
           <span class="orb orb-sm orb-red" aria-hidden="true">❗</span>
           <div>
             <h2 class="card-title">지금 통화 중이시라면</h2>
-            <p class="card-desc">이것부터 꼭 기억해 주세요</p>
+            <p class="card-desc">거짓 상황으로 당황하게 만드는 연락을 조심하세요</p>
           </div>
         </div>
         <ul class="rule-list">
@@ -234,14 +260,24 @@
           </li>
           <li>
             <span class="rule-num">3</span>
-            <span>헷갈리면 내용을 <strong>가족에게 캡처로 보내요</strong></span>
+            <span>헷갈리면 <strong>가족에게 캡처</strong>로 보여 주세요</span>
           </li>
         </ul>
+        <a
+          class="alert-link"
+          href="https://www.counterscam112.go.kr/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          피싱안심SOS에서 대응 방법 보기 →
+        </a>
       </section>
 
       <p class="mini-help">
         급하면
         <a href="tel:112">112</a>
+        ·
+        <a href="https://www.counterscam112.go.kr/" target="_blank" rel="noopener noreferrer">피싱안심SOS</a>
         ·
         <a href="tel:1332">금감원 1332</a>
         ·
@@ -249,8 +285,8 @@
       </p>
 
       <footer class="footer">
-        <p>참고용이에요. 확실하지 않을 땐 가족이나 112·1332에 꼭 물어보세요.</p>
-        <p class="footer-note">국내 AI ‘Solar’로 만들었어요</p>
+        <p>참고용이에요. 확실하지 않을 땐 가족·112·피싱안심SOS에 꼭 물어보세요.</p>
+        <p class="footer-note">국내 AI ‘Solar’로 만들었어요 · 안내 참고: 경찰청 피싱안심SOS</p>
       </footer>
     </main>
 
