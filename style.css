@@ -369,6 +369,50 @@ body {
   font-weight: 500;
 }
 
+.example-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.example-chip {
+  appearance: none;
+  border: 1px solid rgba(49, 130, 246, 0.22);
+  background: rgba(49, 130, 246, 0.07);
+  color: var(--blue-deep);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.example-chip:hover {
+  background: rgba(49, 130, 246, 0.14);
+  border-color: rgba(49, 130, 246, 0.35);
+}
+
+.example-chip:active {
+  transform: scale(0.97);
+}
+
+.example-chip:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.example-chip.is-active {
+  background: linear-gradient(180deg, #4d94ff 0%, #3182f6 100%);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(49, 130, 246, 0.28);
+}
+
 .field-input {
   width: 100%;
   min-height: 128px;

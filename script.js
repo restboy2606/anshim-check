@@ -31,6 +31,23 @@ const LEVEL_UI = {
 const FETCH_TIMEOUT_MS = 25_000;
 let inFlight = false;
 
+/** 클릭 시 입력창에 채워지는 데모용 사기 문자 예시 (저작권 없는 직접 작성) */
+const EXAMPLE_MESSAGES = {
+  nhis: `[국민건강보험] 고객님, 환급금 32,900원이 발생했습니다.
+오늘 24시 전 미신청 시 소멸됩니다.
+아래 링크에서 계좌를 등록해 주세요.
+https://nhis-refund-check.example.com/apply`,
+  delivery: `[한진택배] 배송지 오류로 반송 예정입니다.
+주소·결제 정보를 수정하지 않으면 반송됩니다.
+https://hanjin-reship.example.net/p/88`,
+  prosecutor: `[서울중앙지검] 귀하의 명의로 금융사기 사건이 접수되었습니다.
+계좌 동결 예정이며, 확인 전화 후 보호계좌로 이체 안내를 받으시기 바랍니다.
+직통: 02-0000-0000`,
+  family: `엄마 나 핸드폰 고장나서 이 번호로 연락해.
+지금 급해서 그런데 우리은행 1002-000-000000 으로 50만원만 빨리 보내줘.
+아빠한테는 말 말고!!`,
+};
+
 function setBusy(busy) {
   inFlight = busy;
   submitBtn.disabled = busy;
@@ -382,6 +399,30 @@ function updateCharCount() {
   charMeta.classList.toggle("danger", n >= 2000);
 }
 
+function fillExample(key) {
+  const text = EXAMPLE_MESSAGES[key];
+  if (!text || !textarea) return;
+  textarea.value = text;
+  updateCharCount();
+  textarea.focus();
+  // 커서를 끝으로
+  const end = textarea.value.length;
+  textarea.setSelectionRange(end, end);
+
+  document.querySelectorAll(".example-chip").forEach((btn) => {
+    btn.classList.toggle("is-active", btn.dataset.example === key);
+  });
+}
+
+const exampleChips = document.getElementById("example-chips");
+if (exampleChips) {
+  exampleChips.addEventListener("click", (e) => {
+    const btn = e.target.closest(".example-chip");
+    if (!btn) return;
+    fillExample(btn.dataset.example);
+  });
+}
+
 form.addEventListener("submit", (e) => {
   e.preventDefault();
   runCheck();
@@ -391,7 +432,12 @@ bottomSubmit.addEventListener("click", () => {
   runCheck();
 });
 
-textarea.addEventListener("input", updateCharCount);
+textarea.addEventListener("input", () => {
+  updateCharCount();
+  document
+    .querySelectorAll(".example-chip.is-active")
+    .forEach((btn) => btn.classList.remove("is-active"));
+});
 
 if (missingPrev) missingPrev.addEventListener("click", () => goMissingPage(-1));
 if (missingNext) missingNext.addEventListener("click", () => goMissingPage(1));
