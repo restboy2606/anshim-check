@@ -181,6 +181,16 @@ async function runCheck() {
   }
 }
 
+function badgeFor(code, label) {
+  const c = String(code || "");
+  if (c === "010" || c === "061") return { cls: "b-child", label: "아동" };
+  if (c === "070") return { cls: "b-dementia", label: "치매 어르신" };
+  if (c === "060" || c === "062") return { cls: "b-disability", label: "발달장애" };
+  if (c === "040") return { cls: "b-unknown", label: "보호시설" };
+  if (c === "020") return { cls: "b-runaway", label: "가출인" };
+  return { cls: "b-default", label: label || "실종" };
+}
+
 function formatDate(raw) {
   const s = String(raw || "");
   if (/^\d{8}$/.test(s)) {
@@ -249,12 +259,14 @@ function renderMissingItems(items) {
       photo.textContent = "사진 없음";
     }
 
+    const badge = badgeFor(item.targetCode, item.target);
     const meta = document.createElement("div");
     meta.className = "snack-meta";
     meta.innerHTML = `
+      <span class="snack-badge ${badge.cls}">${escapeHtml(badge.label)}</span>
       <p class="snack-name">${escapeHtml(item.name)}</p>
       <p class="snack-line">${escapeHtml(
-        [item.sex, item.ageNow ? `현재 ${item.ageNow}세` : "", item.target]
+        [item.sex, item.ageNow ? `지금 ${item.ageNow}세` : ""]
           .filter(Boolean)
           .join(" · ")
       )}</p>

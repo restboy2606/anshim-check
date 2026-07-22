@@ -55,6 +55,7 @@ function normalizeItem(raw, index) {
     ageNow: raw.ageNow != null ? String(raw.ageNow) : "",
     place: raw.occrAdres || "",
     date: raw.occrde || "",
+    targetCode: code,
     target: TARGET_LABEL[code] || code || "",
     dressing: raw.alldressingDscd || "",
     photoUrl: pickPhotoUrl(raw),
@@ -91,10 +92,13 @@ export default async function handler(req, res) {
     body.set("authKey", authKey);
     body.set("rowSize", "6");
     body.set("page", "1");
-    // 아동 우선 + 치매·지적장애 포함 (부모님 세대 공감 넓힘)
-    body.append("writngTrgetDscds", "010");
-    body.append("writngTrgetDscds", "061");
-    body.append("writngTrgetDscds", "070");
+    // 실종 취약계층 전반: 아동·시설보호무연고·지적장애·치매 (부모님 세대 공감 + 자연스러운 다양성)
+    body.append("writngTrgetDscds", "010"); // 아동
+    body.append("writngTrgetDscds", "040"); // 시설보호무연고
+    body.append("writngTrgetDscds", "060"); // 지적장애인
+    body.append("writngTrgetDscds", "061"); // 지적장애(아동)
+    body.append("writngTrgetDscds", "062"); // 지적장애(성인)
+    body.append("writngTrgetDscds", "070"); // 치매
 
     const upstream = await fetch(
       "https://www.safe182.go.kr/api/lcm/findChildList.do",
