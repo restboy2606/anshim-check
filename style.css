@@ -698,15 +698,12 @@ body {
 
 /* 확인한 문자 하이라이트 */
 .result-source {
-  margin: 0 16px 4px;
-  border-radius: 14px;
-  border: 1px solid rgba(11, 65, 173, 0.1);
-  background: var(--grey100);
-  overflow: hidden;
+  border-top: 1px solid var(--grey100);
+  background: var(--white);
 }
 
 .result-source-head {
-  padding: 12px 14px 8px;
+  padding: 14px 16px 8px;
 }
 
 .result-source-title {
@@ -739,7 +736,10 @@ body {
 }
 
 .result-source-body {
-  padding: 0 14px 14px;
+  margin: 0 16px 16px;
+  padding: 12px 14px;
+  background: var(--grey100);
+  border-radius: 12px;
   font-size: 15px;
   line-height: 1.6;
   color: var(--grey800);
