@@ -300,7 +300,7 @@ function renderMissingEmpty(message, needKey) {
     <p class="snack-empty-body">${escapeHtml(message)}</p>
     ${
       needKey
-        ? `<p class="snack-empty-tip">안전Dream OpenAPI 인증키를 연결하면<br/>과자 뒷면처럼 실제 공개 사진이 여기에 표시됩니다.</p>`
+        ? `<p class="snack-empty-tip">안전Dream 인증키를 연결하면<br/>실제 공개 사진이 여기에 표시됩니다.</p>`
         : ""
     }
   `;

@@ -1135,13 +1135,13 @@ body {
 .snack-card {
   display: flex;
   flex-direction: column;
-  background: #fffdf7;
+  background: #fafbfd;
   border-radius: 12px;
   overflow: hidden;
   text-decoration: none;
   color: inherit;
-  border: 1px solid #efd7a4;
-  box-shadow: 0 4px 10px rgba(120, 80, 20, 0.08);
+  border: 1px solid rgba(11, 65, 173, 0.1);
+  box-shadow: 0 4px 10px rgba(11, 65, 173, 0.06);
   transition: transform 0.12s ease;
 }
 
@@ -1151,7 +1151,7 @@ body {
 
 .snack-photo {
   aspect-ratio: 3 / 3.4;
-  background: #efe4cb;
+  background: #e8eef8;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -1167,7 +1167,7 @@ body {
 .snack-photo.no-photo {
   font-size: 12px;
   font-weight: 700;
-  color: #9a7a45;
+  color: var(--grey500);
 }
 
 .snack-meta {
@@ -1178,19 +1178,19 @@ body {
   font-size: 14px;
   font-weight: 900;
   letter-spacing: -0.03em;
-  color: #2d1c0c;
+  color: var(--grey900);
   margin-bottom: 2px;
 }
 
 .snack-line {
   font-size: 11px;
   line-height: 1.4;
-  color: #5d4324;
+  color: var(--grey700);
   font-weight: 600;
 }
 
 .snack-line.dim {
-  color: #8a6a3e;
+  color: var(--grey500);
   font-weight: 500;
   margin-top: 2px;
 }
@@ -1217,28 +1217,28 @@ body {
   grid-column: 1 / -1;
   text-align: center;
   padding: 22px 12px;
-  background: rgba(255, 253, 247, 0.85);
+  background: var(--blue-soft);
   border-radius: 12px;
-  border: 1px dashed #d8b56a;
+  border: 1px dashed rgba(11, 65, 173, 0.2);
 }
 
 .snack-empty-title {
   font-size: 15px;
   font-weight: 900;
-  color: #3a2410;
+  color: var(--grey900);
   margin-bottom: 6px;
 }
 
 .snack-empty-body {
   font-size: 13px;
-  color: #6b4a22;
+  color: var(--grey700);
   line-height: 1.5;
 }
 
 .snack-empty-tip {
   margin-top: 10px;
   font-size: 12px;
-  color: #8a6a3e;
+  color: var(--grey500);
   line-height: 1.5;
 }
 
@@ -1246,7 +1246,7 @@ body {
   margin-top: 10px;
   text-align: center;
   font-size: 11px;
-  color: #8a6a3e;
+  color: var(--grey500);
   font-weight: 600;
   min-height: 1.2em;
 }
@@ -1278,9 +1278,9 @@ body {
 }
 
 .snack-btn.ghost {
-  background: rgba(255, 255, 255, 0.75);
-  color: #3a2410;
-  border: 1px solid #e0c07a;
+  background: var(--white);
+  color: var(--blue-deep);
+  border: 1px solid rgba(11, 65, 173, 0.2);
 }
 
 .snack-source {
@@ -1288,7 +1288,7 @@ body {
   text-align: center;
   font-size: 11px;
   font-weight: 700;
-  color: #8a6a3e;
+  color: var(--grey500);
 }
 
 .orb {
