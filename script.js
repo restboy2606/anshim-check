@@ -333,12 +333,15 @@ function renderMissingPage(page) {
     missingGrid.innerHTML = "";
     slice.forEach((item) => missingGrid.appendChild(buildMissingCard(item)));
     missingGrid.classList.remove("is-fading");
+    missingGrid.style.transform = "";
   }, 160);
 
   if (missingCounter) {
     missingCounter.textContent = `${missingPage + 1} / ${count}`;
   }
   if (missingControls) missingControls.hidden = count <= 1;
+  const swipeHint = document.getElementById("missing-swipe-hint");
+  if (swipeHint) swipeHint.hidden = count <= 1;
 }
 
 function stopMissingAuto() {
@@ -357,11 +360,119 @@ function startMissingAuto() {
   );
 }
 
-// 사용자가 화살표를 누르면 자동전환을 잠시 멈췄다 재개
+// 사용자가 화살표·스와이프하면 자동전환을 잠시 멈췄다 재개
 function goMissingPage(delta) {
   stopMissingAuto();
   renderMissingPage(missingPage + delta);
   startMissingAuto();
+}
+
+/** 실종보드: 손가락 좌우 스와이프로 페이지 넘김 */
+function bindMissingSwipe() {
+  const stage = document.getElementById("missing-stage") || missingGrid;
+  if (!stage || !missingGrid) return;
+
+  let startX = 0;
+  let startY = 0;
+  let tracking = false;
+  let locked = null; // 'x' | 'y' | null
+  let didSwipe = false;
+  const THRESHOLD = 48;
+
+  const onStart = (x, y) => {
+    if (missingPageCount() <= 1) return;
+    startX = x;
+    startY = y;
+    tracking = true;
+    locked = null;
+    didSwipe = false;
+    missingGrid.classList.add("is-swiping");
+  };
+
+  const onMove = (x, y, e) => {
+    if (!tracking) return;
+    const dx = x - startX;
+    const dy = y - startY;
+    if (!locked) {
+      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      locked = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+    }
+    if (locked === "y") return;
+    if (e && e.cancelable) e.preventDefault();
+    const damp = Math.max(-80, Math.min(80, dx * 0.35));
+    missingGrid.style.transform = `translateX(${damp}px)`;
+  };
+
+  const onEnd = (x) => {
+    if (!tracking) return;
+    tracking = false;
+    missingGrid.classList.remove("is-swiping");
+    missingGrid.style.transform = "";
+    if (locked !== "x") return;
+    const dx = x - startX;
+    if (Math.abs(dx) < THRESHOLD) return;
+    didSwipe = true;
+    // 왼쪽으로 밀면 다음, 오른쪽이면 이전
+    goMissingPage(dx < 0 ? 1 : -1);
+  };
+
+  // 스와이프 직후 카드 링크 클릭 방지
+  stage.addEventListener(
+    "click",
+    (e) => {
+      if (!didSwipe) return;
+      e.preventDefault();
+      e.stopPropagation();
+      didSwipe = false;
+    },
+    true
+  );
+
+  stage.addEventListener(
+    "touchstart",
+    (e) => {
+      if (!e.touches[0]) return;
+      onStart(e.touches[0].clientX, e.touches[0].clientY);
+    },
+    { passive: true }
+  );
+  stage.addEventListener(
+    "touchmove",
+    (e) => {
+      if (!e.touches[0]) return;
+      onMove(e.touches[0].clientX, e.touches[0].clientY, e);
+    },
+    { passive: false }
+  );
+  stage.addEventListener(
+    "touchend",
+    (e) => {
+      const t = e.changedTouches && e.changedTouches[0];
+      onEnd(t ? t.clientX : startX);
+    },
+    { passive: true }
+  );
+  stage.addEventListener("touchcancel", () => {
+    tracking = false;
+    missingGrid.classList.remove("is-swiping");
+    missingGrid.style.transform = "";
+  });
+
+  // 데스크톱 드래그도 지원
+  let mouseDown = false;
+  stage.addEventListener("mousedown", (e) => {
+    mouseDown = true;
+    onStart(e.clientX, e.clientY);
+  });
+  window.addEventListener("mousemove", (e) => {
+    if (!mouseDown) return;
+    onMove(e.clientX, e.clientY, e);
+  });
+  window.addEventListener("mouseup", (e) => {
+    if (!mouseDown) return;
+    mouseDown = false;
+    onEnd(e.clientX);
+  });
 }
 
 function renderMissingItems(items) {
@@ -451,6 +562,7 @@ textarea.addEventListener("input", () => {
 
 if (missingPrev) missingPrev.addEventListener("click", () => goMissingPage(-1));
 if (missingNext) missingNext.addEventListener("click", () => goMissingPage(1));
+bindMissingSwipe();
 
 // Ctrl/Cmd+Enter 로 바로 확인
 textarea.addEventListener("keydown", (e) => {

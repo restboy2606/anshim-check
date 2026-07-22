@@ -68,35 +68,12 @@
         </div>
 
         <form id="check-form" class="check-form">
-          <div class="example-block" id="example-chips">
-            <p class="example-hook">혹시 이런 문자를 받으셨나요?</p>
-            <p class="example-hint">눌러 보시면 예시가 그대로 들어가요</p>
-            <div class="example-list" role="group" aria-label="예시 문자 선택">
-              <button type="button" class="example-card" data-example="nhis">
-                <span class="example-card-kicker">문자</span>
-                <span class="example-card-preview">[국민건강보험] 환급금 32,900원이 발생했습니다. 오늘 24시 전…</span>
-              </button>
-              <button type="button" class="example-card" data-example="delivery">
-                <span class="example-card-kicker">문자</span>
-                <span class="example-card-preview">[한진택배] 배송지 오류로 반송 예정입니다. 주소·결제 정보를…</span>
-              </button>
-              <button type="button" class="example-card" data-example="prosecutor">
-                <span class="example-card-kicker">문자</span>
-                <span class="example-card-preview">[서울중앙지검] 명의 금융사기 사건 접수. 계좌 동결 예정…</span>
-              </button>
-              <button type="button" class="example-card" data-example="family">
-                <span class="example-card-kicker">카톡</span>
-                <span class="example-card-preview">엄마 핸드폰 고장나서 이 번호로 연락해. 50만원만 빨리…</span>
-              </button>
-            </div>
-          </div>
-
           <textarea
             id="message-input"
             class="field-input"
             rows="5"
             maxlength="2000"
-            placeholder="예) [국민건강보험] 환급금이 발생했습니다. 링크에서 확인하세요…"
+            placeholder="받으신 문자·카톡을 여기에 붙여넣어 주세요"
             required
             autocomplete="off"
             autofocus
@@ -105,6 +82,41 @@
           <div class="field-row">
             <span class="field-hint">적어 주신 내용은 저장하지 않아요</span>
             <span class="field-meta" id="char-meta"><span id="char-count">0</span>/2000</span>
+          </div>
+
+          <div class="example-block" id="example-chips">
+            <p class="example-hook">아직 붙여넣을 게 없으신가요?</p>
+            <p class="example-hint">아래 예시를 <strong>눌러 보시면</strong> 입력창에 채워져요. 한번 눌러 보세요.</p>
+            <div class="example-list" role="group" aria-label="예시 문자 선택">
+              <button type="button" class="example-card" data-example="nhis">
+                <span class="example-card-kicker">문자 예시</span>
+                <span class="example-card-preview">
+                  <span class="example-line">[국민건강보험] 환급금 32,900원이 발생했습니다.</span>
+                  <span class="example-line">오늘 24시 전 미신청 시 소멸됩니다. 링크 확인…</span>
+                </span>
+              </button>
+              <button type="button" class="example-card" data-example="delivery">
+                <span class="example-card-kicker">문자 예시</span>
+                <span class="example-card-preview">
+                  <span class="example-line">[한진택배] 배송지 오류로 반송 예정입니다.</span>
+                  <span class="example-line">주소·결제 정보를 수정해 주세요. 링크…</span>
+                </span>
+              </button>
+              <button type="button" class="example-card" data-example="prosecutor">
+                <span class="example-card-kicker">문자 예시</span>
+                <span class="example-card-preview">
+                  <span class="example-line">[서울중앙지검] 명의 금융사기 사건이 접수됐습니다.</span>
+                  <span class="example-line">계좌 동결 예정. 직통 전화로 확인하세요…</span>
+                </span>
+              </button>
+              <button type="button" class="example-card" data-example="family">
+                <span class="example-card-kicker">카톡 예시</span>
+                <span class="example-card-preview">
+                  <span class="example-line">엄마 핸드폰 고장나서 이 번호로 연락해.</span>
+                  <span class="example-line">급해서 그런데 50만원만 빨리 보내줘…</span>
+                </span>
+              </button>
+            </div>
           </div>
 
           <button type="submit" id="submit-btn" class="btn-primary">
@@ -166,11 +178,17 @@
           </p>
         </header>
 
-        <div id="missing-grid" class="snack-grid" aria-live="polite">
-          <div class="snack-skeleton" aria-hidden="true"></div>
-          <div class="snack-skeleton" aria-hidden="true"></div>
-          <div class="snack-skeleton" aria-hidden="true"></div>
-          <div class="snack-skeleton" aria-hidden="true"></div>
+        <div
+          class="snack-stage"
+          id="missing-stage"
+          aria-label="실종 사진, 옆으로 밀어서 넘길 수 있어요"
+        >
+          <div id="missing-grid" class="snack-grid" aria-live="polite">
+            <div class="snack-skeleton" aria-hidden="true"></div>
+            <div class="snack-skeleton" aria-hidden="true"></div>
+            <div class="snack-skeleton" aria-hidden="true"></div>
+            <div class="snack-skeleton" aria-hidden="true"></div>
+          </div>
         </div>
 
         <div class="snack-controls" id="missing-controls" hidden>
@@ -178,6 +196,7 @@
           <span class="snack-counter" id="missing-counter" aria-live="polite">1 / 1</span>
           <button type="button" class="snack-nav" id="missing-next" aria-label="다음 사진 보기">›</button>
         </div>
+        <p class="snack-swipe-hint" id="missing-swipe-hint" hidden>손가락으로 옆으로 밀면 다음 얼굴이 나와요</p>
 
         <p id="missing-note" class="snack-note"></p>
 

@@ -373,7 +373,9 @@ body {
 }
 
 .example-block {
-  margin-bottom: 12px;
+  margin: 4px 0 14px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(60, 48, 32, 0.1);
 }
 
 .example-hook {
@@ -381,14 +383,20 @@ body {
   font-weight: 800;
   letter-spacing: -0.03em;
   color: var(--grey800);
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 .example-hint {
   font-size: 12px;
   font-weight: 600;
   color: var(--grey500);
-  margin-bottom: 8px;
+  margin-bottom: 10px;
+  line-height: 1.45;
+}
+
+.example-hint strong {
+  color: var(--blue-deep);
+  font-weight: 800;
 }
 
 .example-list {
@@ -408,6 +416,7 @@ body {
   padding: 10px 12px;
   border-radius: 14px;
   cursor: pointer;
+  min-height: 78px;
   box-shadow: 0 2px 8px rgba(60, 48, 32, 0.04);
   transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
 }
@@ -441,17 +450,26 @@ body {
   background: rgba(196, 120, 90, 0.12);
   padding: 2px 7px;
   border-radius: 999px;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
 }
 
 .example-card-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 2.7em;
+}
+
+.example-line {
   display: block;
   font-size: 13px;
   font-weight: 600;
-  line-height: 1.45;
+  line-height: 1.35;
   letter-spacing: -0.02em;
   color: var(--grey700);
-  word-break: keep-all;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .field-input {
@@ -761,16 +779,18 @@ body {
   position: relative;
   display: flex;
   gap: 10px;
-  align-items: flex-start;
-  padding: 12px 12px 12px 12px;
-  font-size: 15px;
-  line-height: 1.55;
+  align-items: center;
+  min-height: 48px;
+  padding: 11px 12px;
+  font-size: 14px;
+  line-height: 1.25;
   color: var(--grey800);
   letter-spacing: -0.02em;
   background: var(--white);
   border: 1px solid rgba(60, 48, 32, 0.06);
   border-radius: 14px;
   box-shadow: 0 2px 8px rgba(60, 48, 32, 0.04);
+  overflow: hidden;
 }
 
 .result-list li::before {
@@ -778,7 +798,6 @@ body {
   flex-shrink: 0;
   width: 22px;
   height: 22px;
-  margin-top: 1px;
   border-radius: 8px;
   display: grid;
   place-items: center;
@@ -791,6 +810,15 @@ body {
 .result-list.action li::before {
   color: #fffcf7;
   background: var(--blue);
+}
+
+.result-item-text {
+  min-width: 0;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
 }
 
 .result-raw {
@@ -883,16 +911,41 @@ body {
   color: #7a5a30;
 }
 
+.snack-stage {
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  margin-top: 2px;
+}
+
 .snack-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
   min-height: 120px;
-  transition: opacity 0.16s ease;
+  transition: opacity 0.16s ease, transform 0.18s ease;
+  will-change: transform, opacity;
 }
 
 .snack-grid.is-fading {
   opacity: 0;
+}
+
+.snack-grid.is-swiping {
+  transition: none;
+}
+
+.snack-swipe-hint {
+  margin-top: 8px;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #8a6a3e;
+}
+
+.snack-swipe-hint[hidden] {
+  display: none;
 }
 
 /* 캐러셀 컨트롤 — 이전/다음 화살표 + 위치 표시 */
