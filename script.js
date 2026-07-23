@@ -1043,6 +1043,7 @@ window.addEventListener("load", () => {
   const card = document.getElementById("install-card");
   const btn = document.getElementById("install-btn");
   const hint = document.getElementById("install-hint");
+  const descEl = card && card.querySelector(".install-desc");
   if (!card || !btn) return;
 
   const isStandalone =
@@ -1051,41 +1052,85 @@ window.addEventListener("load", () => {
     window.navigator.standalone === true;
   if (isStandalone) return; // 이미 홈 화면 앱으로 실행 중이면 숨김
 
-  let deferredPrompt = null;
+  const ua = navigator.userAgent || "";
+  const isIOS = /iphone|ipad|ipod/i.test(ua);
+  const isAndroid = /android/i.test(ua);
+  const isKakao = /kakaotalk/i.test(ua);
+  // 카톡·인스타·페북·라인 등 인앱 브라우저 (홈 화면 추가 불가)
+  const isInApp =
+    isKakao || /(FBAN|FBAV|Instagram|Line\/|DaumApps|; wv\))/i.test(ua);
 
+  let deferredPrompt = null;
   window.addEventListener("beforeinstallprompt", (e) => {
     e.preventDefault();
     deferredPrompt = e;
   });
 
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent || "");
-
-  function showHint() {
+  function setHint(html) {
     if (!hint) return;
-    hint.innerHTML = isIOS
-      ? "아이폰은 화면 아래 <strong>공유 버튼</strong>을 누른 뒤 <strong>‘홈 화면에 추가’</strong>를 선택해 주세요."
-      : "브라우저 <strong>메뉴(⋮)</strong>를 열어 <strong>‘홈 화면에 추가’</strong> 또는 <strong>‘앱 설치’</strong>를 눌러 주세요.";
+    hint.innerHTML = html;
     hint.hidden = false;
   }
-
-  btn.addEventListener("click", async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      try {
-        await deferredPrompt.userChoice;
-      } catch {
-        /* 사용자가 취소해도 무시 */
-      }
-      deferredPrompt = null;
-    } else {
-      showHint();
-    }
-  });
 
   window.addEventListener("appinstalled", () => {
     card.hidden = true;
     showToast("홈 화면에 추가됐어요");
   });
+
+  if (isInApp) {
+    // 인앱 브라우저: 홈 화면 추가가 원천 차단됨 → 외부 브라우저로 열도록 유도
+    btn.textContent = "크롬·사파리로 열기";
+    if (descEl) {
+      descEl.innerHTML =
+        "카톡 같은 앱 안에서는 홈 화면 추가가 안 돼요.<br />크롬·사파리로 열면 아이콘으로 저장할 수 있어요.";
+    }
+    btn.addEventListener("click", () => {
+      if (isKakao) {
+        // 카카오톡 공식 스킴 — 기본 브라우저로 열기 (안드로이드·아이폰 공통)
+        window.location.href =
+          "kakaotalk://web/openExternal?url=" +
+          encodeURIComponent(window.location.href);
+        window.setTimeout(function () {
+          setHint(
+            "안 열리면 <strong>브라우저 메뉴</strong>에서 <strong>‘다른 브라우저로 열기’</strong>를 눌러 주세요."
+          );
+        }, 1200);
+      } else if (isAndroid) {
+        const clean = window.location.href.replace(/^https?:\/\//, "");
+        window.location.href =
+          "intent://" +
+          clean +
+          "#Intent;scheme=https;package=com.android.chrome;end";
+        window.setTimeout(function () {
+          setHint(
+            "안 열리면 <strong>메뉴</strong>에서 <strong>‘다른 브라우저로 열기’</strong>를 눌러 주세요."
+          );
+        }, 1200);
+      } else {
+        setHint(
+          "오른쪽 <strong>메뉴</strong>에서 <strong>‘Safari로 열기’</strong>를 누른 뒤, 홈 화면에 추가해 주세요."
+        );
+      }
+    });
+  } else {
+    btn.addEventListener("click", async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        try {
+          await deferredPrompt.userChoice;
+        } catch {
+          /* 사용자가 취소해도 무시 */
+        }
+        deferredPrompt = null;
+      } else {
+        setHint(
+          isIOS
+            ? "아이폰은 화면 아래 <strong>공유 버튼</strong>을 누른 뒤 <strong>‘홈 화면에 추가’</strong>를 선택해 주세요."
+            : "브라우저 <strong>메뉴(⋮)</strong>를 열어 <strong>‘홈 화면에 추가’</strong> 또는 <strong>‘앱 설치’</strong>를 눌러 주세요."
+        );
+      }
+    });
+  }
 
   card.hidden = false;
 })();
