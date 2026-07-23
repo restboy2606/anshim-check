@@ -1055,6 +1055,7 @@ window.addEventListener("load", () => {
   const ua = navigator.userAgent || "";
   const isIOS = /iphone|ipad|ipod/i.test(ua);
   const isAndroid = /android/i.test(ua);
+  const isSamsung = /SamsungBrowser/i.test(ua);
   const isKakao = /kakaotalk/i.test(ua);
   // 카톡·인스타·페북·라인 등 인앱 브라우저 (홈 화면 추가 불가)
   const isInApp =
@@ -1122,11 +1123,17 @@ window.addEventListener("load", () => {
           /* 사용자가 취소해도 무시 */
         }
         deferredPrompt = null;
+      } else if (isIOS) {
+        setHint(
+          "아이폰은 화면 아래 <strong>공유 버튼</strong>을 누른 뒤 <strong>‘홈 화면에 추가’</strong>를 선택해 주세요."
+        );
+      } else if (isSamsung) {
+        setHint(
+          "삼성 인터넷은 아래 <strong>메뉴(≡)</strong>에서 <strong>‘현재 페이지 추가’ → ‘홈 화면’</strong>을 눌러 주세요."
+        );
       } else {
         setHint(
-          isIOS
-            ? "아이폰은 화면 아래 <strong>공유 버튼</strong>을 누른 뒤 <strong>‘홈 화면에 추가’</strong>를 선택해 주세요."
-            : "브라우저 <strong>메뉴(⋮)</strong>를 열어 <strong>‘홈 화면에 추가’</strong> 또는 <strong>‘앱 설치’</strong>를 눌러 주세요."
+          "브라우저 <strong>메뉴(⋮)</strong>를 열어 <strong>‘홈 화면에 추가’</strong> 또는 <strong>‘앱 설치’</strong>를 눌러 주세요."
         );
       }
     });
