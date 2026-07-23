@@ -1571,6 +1571,98 @@ mark.risk-mark {
   border-color: #ffd6dc;
 }
 
+/* 홈 화면 추가 카드 — 눈에 띄게 */
+.install-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  padding: 20px 18px;
+  margin-bottom: 12px;
+  background: linear-gradient(150deg, #1f6bff 0%, var(--blue) 62%, var(--blue-deep) 100%);
+  box-shadow: 0 14px 30px rgba(11, 65, 173, 0.28);
+  color: #fff;
+}
+.install-card::after {
+  content: "";
+  position: absolute;
+  right: -40px;
+  top: -40px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+}
+.install-top {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 13px;
+  align-items: center;
+}
+.install-icon {
+  flex: none;
+  width: 56px;
+  height: 56px;
+  border-radius: 15px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 14px rgba(10, 54, 145, 0.3);
+}
+.install-icon img {
+  border-radius: 11px;
+  display: block;
+}
+.install-title {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.install-desc {
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 5px 0 0;
+  word-break: keep-all;
+}
+.install-btn {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  margin-top: 15px;
+  padding: 14px;
+  border: none;
+  border-radius: 14px;
+  background: #fff;
+  color: var(--blue);
+  font-size: 15.5px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(10, 54, 145, 0.2);
+  transition: transform 0.06s ease;
+}
+.install-btn:active {
+  transform: scale(0.985);
+}
+.install-hint {
+  position: relative;
+  z-index: 1;
+  margin: 12px 0 0;
+  padding: 11px 13px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.16);
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: #fff;
+  word-break: keep-all;
+}
+.install-hint strong {
+  color: var(--blue-soft);
+  font-weight: 800;
+}
+
 .rule-list {
   list-style: none;
   display: flex;

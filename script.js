@@ -1037,3 +1037,55 @@ window.addEventListener("load", () => {
   loadMissingBoard();
   startMissingRefreshLoop();
 });
+
+/* 홈 화면에 추가 유도 — 부모님이 자주·쉽게 열 수 있게 */
+(function initAddToHome() {
+  const card = document.getElementById("install-card");
+  const btn = document.getElementById("install-btn");
+  const hint = document.getElementById("install-hint");
+  if (!card || !btn) return;
+
+  const isStandalone =
+    (window.matchMedia &&
+      window.matchMedia("(display-mode: standalone)").matches) ||
+    window.navigator.standalone === true;
+  if (isStandalone) return; // 이미 홈 화면 앱으로 실행 중이면 숨김
+
+  let deferredPrompt = null;
+
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+  });
+
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent || "");
+
+  function showHint() {
+    if (!hint) return;
+    hint.innerHTML = isIOS
+      ? "아이폰은 화면 아래 <strong>공유 버튼</strong>을 누른 뒤 <strong>‘홈 화면에 추가’</strong>를 선택해 주세요."
+      : "브라우저 <strong>메뉴(⋮)</strong>를 열어 <strong>‘홈 화면에 추가’</strong> 또는 <strong>‘앱 설치’</strong>를 눌러 주세요.";
+    hint.hidden = false;
+  }
+
+  btn.addEventListener("click", async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      try {
+        await deferredPrompt.userChoice;
+      } catch {
+        /* 사용자가 취소해도 무시 */
+      }
+      deferredPrompt = null;
+    } else {
+      showHint();
+    }
+  });
+
+  window.addEventListener("appinstalled", () => {
+    card.hidden = true;
+    showToast("홈 화면에 추가됐어요");
+  });
+
+  card.hidden = false;
+})();

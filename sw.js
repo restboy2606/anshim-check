@@ -4,7 +4,7 @@
  *  - /api/* 는 항상 네트워크
  *  - 오프라인 대비로 정적 셸은 설치 시 미리 캐시
  */
-const CACHE_NAME = "anshim-check-v2";
+const CACHE_NAME = "anshim-check-v3";
 const SHELL = [
   "./",
   "./index.html",
