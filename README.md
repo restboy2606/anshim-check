@@ -3,7 +3,7 @@
 부모님 세대를 노리는 **스미싱·보이스피싱 문자를 붙여넣기만 하면**, 국내 AI가 위험 여부와 이유를 알려 주는 웹 서비스입니다.
 
 <p align="center">
-  <img src="docs/images/hero-app.png" alt="안심체크 서비스 히어로 이미지" width="720" />
+  <img src="assets/readme/hero-app.png" alt="안심체크 서비스 히어로 이미지" width="720" />
 </p>
 
 [![Live Demo](https://img.shields.io/badge/Live-anshim--check.vercel.app-3182f6?style=for-the-badge&logo=vercel&logoColor=white)](https://anshim-check.vercel.app)
@@ -60,7 +60,7 @@
 ## 서비스 구조
 
 <p align="center">
-  <img src="docs/images/hero-flow.png" alt="문자 확인 흐름 개념 이미지" width="720" />
+  <img src="assets/readme/hero-flow.png" alt="문자 확인 흐름 개념 이미지" width="720" />
 </p>
 
 <p align="center"><sub>개념 이미지 · 실제 요청 경로는 아래 구조도를 기준으로 보세요</sub></p>
