@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-label="안심체크 사용 흐름">
+  <rect width="1200" height="420" fill="#ffffff"/>
+  <text x="60" y="58" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="28" font-weight="800" fill="#15171c">사용 흐름</text>
+  <text x="60" y="92" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="16" fill="#8b93a0">붙여넣기 → 판정 → 공유</text>
+
+  <!-- card 1 -->
+  <rect x="60" y="140" rx="28" ry="28" width="300" height="210" fill="#f5f8fc" stroke="#edf0f4"/>
+  <circle cx="120" cy="196" r="28" fill="#e9f1ff"/>
+  <text x="120" y="204" text-anchor="middle" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="22" font-weight="800" fill="#1b64da">1</text>
+  <text x="100" y="260" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="24" font-weight="800" fill="#15171c">문자 붙여넣기</text>
+  <text x="100" y="298" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="16" fill="#5b6470">의심 문자·카톡 입력</text>
+  <text x="100" y="324" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="16" fill="#5b6470">또는 예시 카드 체험</text>
+
+  <!-- arrow -->
+  <path d="M380 245 H430" stroke="#3182f6" stroke-width="6" stroke-linecap="round"/>
+  <path d="M418 230 L440 245 L418 260" fill="none" stroke="#3182f6" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- card 2 -->
+  <rect x="450" y="140" rx="28" ry="28" width="300" height="210" fill="#e9f1ff" stroke="#dbe8ff"/>
+  <circle cx="510" cy="196" r="28" fill="#ffffff"/>
+  <text x="510" y="204" text-anchor="middle" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="22" font-weight="800" fill="#1b64da">2</text>
+  <text x="490" y="260" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="24" font-weight="800" fill="#15171c">Solar 판정</text>
+  <text x="490" y="298" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="16" fill="#5b6470">점수 · 위험도 · 이유</text>
+  <text x="490" y="324" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="16" fill="#5b6470">지금 할 일 제시</text>
+
+  <!-- arrow -->
+  <path d="M770 245 H820" stroke="#3182f6" stroke-width="6" stroke-linecap="round"/>
+  <path d="M808 230 L830 245 L808 260" fill="none" stroke="#3182f6" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- card 3 -->
+  <rect x="840" y="140" rx="28" ry="28" width="300" height="210" fill="#f5f8fc" stroke="#edf0f4"/>
+  <circle cx="900" cy="196" r="28" fill="#e9f1ff"/>
+  <text x="900" y="204" text-anchor="middle" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="22" font-weight="800" fill="#1b64da">3</text>
+  <text x="880" y="260" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="24" font-weight="800" fill="#15171c">가족 공유</text>
+  <text x="880" y="298" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="16" fill="#5b6470">결과 요약 전달</text>
+  <text x="880" y="324" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="16" fill="#5b6470">공식 상담 안내</text>
+</svg>

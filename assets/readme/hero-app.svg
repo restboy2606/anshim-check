@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-label="안심체크 서비스 미리보기">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eef5ff"/>
+      <stop offset="100%" stop-color="#dbe8ff"/>
+    </linearGradient>
+    <linearGradient id="gauge" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#10b981"/>
+      <stop offset="55%" stop-color="#ffd83d"/>
+      <stop offset="100%" stop-color="#f2547d"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#1b3a6b" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="680" fill="url(#bg)"/>
+  <circle cx="180" cy="120" r="90" fill="#ffffff" opacity="0.45"/>
+  <circle cx="1040" cy="560" r="120" fill="#ffffff" opacity="0.35"/>
+
+  <!-- left copy -->
+  <text x="90" y="210" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="42" font-weight="800" fill="#15171c">이 문자, 진짜예요?</text>
+  <text x="90" y="268" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="24" font-weight="600" fill="#5b6470">붙여넣기 한 번으로</text>
+  <text x="90" y="304" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="24" font-weight="600" fill="#5b6470">위험 점수와 이유를 확인합니다</text>
+  <rect x="90" y="350" rx="18" ry="18" width="250" height="52" fill="#3182f6"/>
+  <text x="215" y="384" text-anchor="middle" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="20" font-weight="700" fill="#ffffff">Solar Pro 3 메인</text>
+  <text x="90" y="440" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="18" fill="#8b93a0">설치 · 가입 · 로그인 없이 바로 사용</text>
+
+  <!-- phone -->
+  <g filter="url(#shadow)">
+    <rect x="690" y="70" rx="48" ry="48" width="360" height="540" fill="#101828"/>
+    <rect x="708" y="92" rx="38" ry="38" width="324" height="496" fill="#ffffff"/>
+    <rect x="820" y="104" rx="10" ry="10" width="100" height="18" fill="#e8edf5"/>
+    <circle cx="768" cy="150" r="14" fill="#3182f6"/>
+    <text x="796" y="157" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="20" font-weight="800" fill="#15171c">안심체크</text>
+    <rect x="736" y="186" rx="16" ry="16" width="268" height="92" fill="#f5f8fc" stroke="#edf0f4"/>
+    <text x="756" y="218" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="15" fill="#5b6470">[Web발신] 소액결제 승인</text>
+    <text x="756" y="244" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="15" fill="#5b6470">즉시 문의 →</text>
+    <rect x="860" y="228" rx="6" ry="6" width="118" height="22" fill="#fff3a3"/>
+    <text x="870" y="244" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="14" font-weight="700" fill="#15171c">me2.kr/aX9k</text>
+    <rect x="736" y="296" rx="18" ry="18" width="268" height="170" fill="#fff5f6" stroke="#ffdbe2"/>
+    <text x="760" y="345" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="48" font-weight="900" fill="#f2547d">72</text>
+    <rect x="880" y="318" rx="14" ry="14" width="100" height="30" fill="#f2547d"/>
+    <text x="930" y="339" text-anchor="middle" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="14" font-weight="800" fill="#ffffff">위험 · 높음</text>
+    <rect x="760" y="368" rx="8" ry="8" width="220" height="10" fill="url(#gauge)"/>
+    <text x="760" y="410" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="15" font-weight="700" fill="#15171c">의심되는 이유</text>
+    <text x="760" y="436" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="14" fill="#5b6470">· 단축 링크 클릭 유도</text>
+    <text x="760" y="458" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="14" fill="#5b6470">· 불안을 자극하는 문구</text>
+  </g>
+</svg>

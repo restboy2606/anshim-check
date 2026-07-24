@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-label="안심체크 기술 구조">
+  <rect width="1200" height="560" fill="#ffffff"/>
+  <text x="60" y="58" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="28" font-weight="800" fill="#15171c">기술 구조</text>
+  <text x="60" y="92" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="16" fill="#8b93a0">Solar 메인 · 해외 AI 보조 · 입력 문자 미저장</text>
+
+  <!-- left stack -->
+  <rect x="60" y="130" rx="22" ry="22" width="520" height="90" fill="#f5f8fc" stroke="#edf0f4"/>
+  <text x="90" y="168" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="14" font-weight="700" fill="#8b93a0">USER</text>
+  <text x="90" y="198" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="24" font-weight="800" fill="#15171c">사용자 폰 / 브라우저</text>
+
+  <path d="M320 220 V250" stroke="#3182f6" stroke-width="5" stroke-linecap="round"/>
+  <path d="M308 238 L320 255 L332 238" fill="none" stroke="#3182f6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <rect x="60" y="255" rx="22" ry="22" width="520" height="90" fill="#e9f1ff" stroke="#dbe8ff"/>
+  <text x="90" y="293" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="14" font-weight="700" fill="#1b64da">FRONTEND</text>
+  <text x="90" y="323" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="24" font-weight="800" fill="#15171c">HTML / CSS / JS + PWA</text>
+
+  <path d="M320 345 V375" stroke="#3182f6" stroke-width="5" stroke-linecap="round"/>
+  <path d="M308 363 L320 380 L332 363" fill="none" stroke="#3182f6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <rect x="60" y="380" rx="22" ry="22" width="520" height="120" fill="#3182f6"/>
+  <text x="90" y="422" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="14" font-weight="700" fill="#dbe8ff">SERVERLESS</text>
+  <text x="90" y="456" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="24" font-weight="800" fill="#ffffff">Vercel Functions</text>
+  <text x="90" y="486" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="16" fill="#e9f1ff">/api/analyze  ·  /api/missing  ·  API 키 보호</text>
+
+  <!-- right cards -->
+  <rect x="640" y="150" rx="22" ry="22" width="500" height="150" fill="#effcf6" stroke="#c8f0dd"/>
+  <text x="670" y="198" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="14" font-weight="700" fill="#10b981">MAIN AI</text>
+  <text x="670" y="238" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="28" font-weight="800" fill="#15171c">Upstage Solar Pro 3</text>
+  <text x="670" y="274" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="16" fill="#5b6470">위험점수 · 이유 · 지금 할 일 생성</text>
+
+  <rect x="640" y="330" rx="22" ry="22" width="500" height="150" fill="#fff5f6" stroke="#ffdbe2"/>
+  <text x="670" y="378" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="14" font-weight="700" fill="#f2547d">PUBLIC DATA</text>
+  <text x="670" y="418" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="28" font-weight="800" fill="#15171c">경찰청 안전Dream</text>
+  <text x="670" y="454" font-family="Segoe UI, Apple SD Gothic Neo, Malgun Gothic, sans-serif" font-size="16" fill="#5b6470">실종 공개정보 보드 · 출처 표기</text>
+
+  <!-- connectors from serverless -->
+  <path d="M580 430 H640" stroke="#3182f6" stroke-width="4" stroke-linecap="round"/>
+  <path d="M580 460 C610 460, 610 405, 640 405" fill="none" stroke="#f2547d" stroke-width="4" stroke-linecap="round"/>
+</svg>

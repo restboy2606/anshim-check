@@ -3,7 +3,7 @@
 부모님 세대를 노리는 **스미싱·보이스피싱 문자를 붙여넣기만 하면**, 국내 AI가 위험 여부와 이유를 알려 주는 웹 서비스입니다.
 
 <p align="center">
-  <img src="assets/readme/hero-app.png" alt="안심체크 서비스 히어로 이미지" width="720" />
+  <img src="assets/readme/hero-app.svg" alt="안심체크 서비스 히어로 이미지" width="720" />
 </p>
 
 [![Live Demo](https://img.shields.io/badge/Live-anshim--check.vercel.app-3182f6?style=for-the-badge&logo=vercel&logoColor=white)](https://anshim-check.vercel.app)
@@ -60,7 +60,7 @@
 ## 서비스 구조
 
 <p align="center">
-  <img src="assets/readme/hero-flow.png" alt="문자 확인 흐름 개념 이미지" width="720" />
+  <img src="assets/readme/hero-flow.svg" alt="문자 확인 흐름 개념 이미지" width="720" />
 </p>
 
 <p align="center"><sub>개념 이미지 · 실제 요청 경로는 아래 구조도를 기준으로 보세요</sub></p>
@@ -157,6 +157,11 @@ flowchart LR
 ---
 
 ## 기술 스택
+
+<p align="center">
+  <img src="assets/readme/hero-arch.svg" alt="안심체크 기술 구조 다이어그램" width="820" />
+</p>
+
 
 ```text
                     ┌──────────────────────┐
@@ -316,8 +321,8 @@ npx vercel dev
 
 ## 이미지 노트
 
-README 상단 비주얼은 NVIDIA NIM의 `black-forest-labs/flux.2-klein-4b`로 생성한 **개념 이미지**입니다.  
-라벨/화살표의 정확한 기술 근거는 위 구조도·mermaid·폴더 구조를 기준으로 합니다.
+README 상단·흐름·구조 이미지는 **텍스트가 깨지지 않도록 SVG로 직접 그린 설명 그림**입니다.  
+정확한 기술 근거는 위 구조도·mermaid·폴더 구조를 함께 보시면 됩니다.
 
 ## 한 줄 다시
 
