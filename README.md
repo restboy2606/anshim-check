@@ -2,6 +2,10 @@
 
 부모님 세대를 노리는 **스미싱·보이스피싱 문자를 붙여넣기만 하면**, 국내 AI가 위험 여부와 이유를 알려 주는 웹 서비스입니다.
 
+<p align="center">
+  <img src="docs/images/hero-app.png" alt="안심체크 서비스 히어로 이미지" width="720" />
+</p>
+
 [![Live Demo](https://img.shields.io/badge/Live-anshim--check.vercel.app-3182f6?style=for-the-badge&logo=vercel&logoColor=white)](https://anshim-check.vercel.app)
 [![Main AI](https://img.shields.io/badge/Main%20AI-Upstage%20Solar%20Pro%203-10b981?style=for-the-badge)](https://www.upstage.ai/)
 [![Stack](https://img.shields.io/badge/Stack-Vanilla%20JS%20%2B%20Vercel-111827?style=for-the-badge)](#-서비스-구조)
@@ -54,6 +58,23 @@
 ---
 
 ## 서비스 구조
+
+<p align="center">
+  <img src="docs/images/hero-flow.png" alt="문자 확인 흐름 개념 이미지" width="720" />
+</p>
+
+<p align="center"><sub>개념 이미지 · 실제 요청 경로는 아래 구조도를 기준으로 보세요</sub></p>
+
+### 한눈에 보기
+
+| 단계 | 누가 | 무엇을 |
+|---|---|---|
+| 1 | 사용자 | 의심 문자/카톡을 붙여넣거나 예시 카드를 누름 |
+| 2 | 프론트엔드 | 입력 검증 후 `/api/analyze` 호출, 결과 화면 구성 |
+| 3 | Vercel Function | API 키 보호, Solar 프롬프트 전달, 응답 중계 |
+| 4 | Solar Pro 3 | 위험점수·위험도·이유·지금 할 일 생성 |
+| 5 | 프론트엔드 | 하이라이트, TTS, 가족 공유, 공식 상담 안내 |
+| 병행 | `/api/missing` | 경찰청 안전Dream 공개정보 보드 표시 |
 
 ### 전체 흐름
 
@@ -289,6 +310,14 @@ npx vercel dev
 - 코드: https://github.com/restboy2606/anshim-check
 
 ---
+
+
+---
+
+## 이미지 노트
+
+README 상단 비주얼은 NVIDIA NIM의 `black-forest-labs/flux.2-klein-4b`로 생성한 **개념 이미지**입니다.  
+라벨/화살표의 정확한 기술 근거는 위 구조도·mermaid·폴더 구조를 기준으로 합니다.
 
 ## 한 줄 다시
 
