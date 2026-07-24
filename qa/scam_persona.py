@@ -10,12 +10,30 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "scripts"))
+
+def project_root() -> Path:
+    here = Path(__file__).resolve().parent
+    for candidate in [here, *here.parents]:
+        if (candidate / "api" / "analyze.js").exists() and (candidate / "index.html").exists():
+            return candidate
+    raise RuntimeError("anshim-check project root not found")
+
+
+def pipeline_root(proj: Path) -> Path:
+    for candidate in [proj, *proj.parents]:
+        if (candidate / "scripts" / "nvidia_nim_client.py").exists():
+            return candidate
+    return proj
+
+
+PROJECT_ROOT = project_root()
+PIPELINE_ROOT = pipeline_root(PROJECT_ROOT)
+sys.path.insert(0, str(PIPELINE_ROOT / "scripts"))
 import nvidia_nim_client  # noqa: E402
 
 ANALYZE_URL = "http://127.0.0.1:3215/api/analyze"
-OUT = Path(__file__).resolve().parent / "_qa_scam_persona_report.json"
+OUT = PROJECT_ROOT / "qa" / "reports" / "scam_persona_report.json"
+OUT.parent.mkdir(parents=True, exist_ok=True)
 
 GEN_PACKET = """당신은 QA용 '사기꾼 페르소나 시뮬레이터'입니다.
 실제 피해를 내는 링크/계좌는 쓰지 마세요. 가짜 예시만 만드세요.

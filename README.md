@@ -207,10 +207,15 @@ anshim-check/
 ├─ sw.js                   # service worker (network-first)
 ├─ manifest.webmanifest    # PWA 설정
 ├─ favicon.svg
-├─ assets/                 # 아이콘, 마스코트
+├─ assets/                 # 아이콘, 마스코트, README 다이어그램
 ├─ api/
 │  ├─ analyze.js           # Solar 판정 프록시
 │  └─ missing.js           # 안전Dream 프록시
+├─ qa/                     # 제출 전 검증 스크립트·리포트 (런타임 분리)
+│  ├─ scam_hard.py
+│  ├─ scam_persona_v2.py
+│  ├─ score.py
+│  └─ reports/
 ├─ .env.example
 └─ README.md
 ```
@@ -260,10 +265,11 @@ anshim-check/
 
 - 초기 프롬프트는 **근거는 사기인데 위험도는 '낮음'**으로 나오는 모순이 있었습니다. 점수-위험도 일치 규칙으로 잡았습니다.
 - **평범한 가족 문자에 없는 위험 요소를 지어내는** 문제도 있어, "입력에 없는 내용은 만들지 말 것" 규칙을 넣었습니다.
-- 실제 사기/정상 문자 표본으로 QA를 돌렸습니다.
+- 실제 사기/정상 문자 표본으로 QA를 돌렸습니다. (`qa/`)
   - 페르소나 시나리오 **10/10**
   - 고난도 사기 문자 **15/15**
   - 점수 경계 테스트 **8/10** (남은 2건은 장애가 아니라 경계 판정 차이)
+  - 리포트: `qa/reports/`
 - 실종정보 API 사진이 URL이 아니라 **base64 원문**으로 온다는 걸 발견해 data URI로 처리했습니다.
 - 하단 영역을 **광고 대신 공익 실종 보드**로 두어, 확인 직후 시선이 머무는 자리를 공익 정보로 채웠습니다.
 

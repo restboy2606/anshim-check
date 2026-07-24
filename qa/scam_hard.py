@@ -12,8 +12,19 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+
+def project_root() -> Path:
+    here = Path(__file__).resolve().parent
+    for candidate in [here, *here.parents]:
+        if (candidate / "api" / "analyze.js").exists() and (candidate / "index.html").exists():
+            return candidate
+    raise RuntimeError("anshim-check project root not found")
+
+
 ANALYZE_URL = "http://127.0.0.1:3216/api/analyze"
-OUT = Path(__file__).resolve().parent / "_qa_scam_hard_report.json"
+PROJECT_ROOT = project_root()
+OUT = PROJECT_ROOT / "qa" / "reports" / "scam_hard_report.json"
+OUT.parent.mkdir(parents=True, exist_ok=True)
 
 # expected: 높음 | 중간 | 낮음
 # pass 규칙: 높음=정확히 높음 / 중간=중간이상 / 낮음=정확히 낮음

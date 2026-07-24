@@ -1,23 +1,18 @@
+# secrets / local runtime
 .env
 node_modules/
 .vercel/
-
-.vercel
 vercel_dev.log
-_qa_nim.py
-_qa_nim_report.json
-_serve_local.mjs
 __pycache__/
 *.pyc
 
+# local-only experiments (not part of submission surface)
+_qa_nim.py
+_qa_nim_report.json
 _qa_nim_score_*
-
-
-assets/_counterscam_*
-_tmp_*
-
-
+_serve_local.mjs
 _brainstorm_nim*
-
 _brainstorm_*
+_tmp_*
+assets/_counterscam_*
 docs/

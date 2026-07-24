@@ -11,9 +11,26 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent
+def project_root() -> Path:
+    here = Path(__file__).resolve().parent
+    for candidate in [here, *here.parents]:
+        if (candidate / "api" / "analyze.js").exists() and (candidate / "index.html").exists():
+            return candidate
+    raise RuntimeError("anshim-check project root not found")
+
+
+def pipeline_root(proj: Path) -> Path:
+    for candidate in [proj, *proj.parents]:
+        if (candidate / "scripts" / "nvidia_nim_client.py").exists():
+            return candidate
+    return proj
+
+
+ROOT = project_root()
+PIPELINE_ROOT = pipeline_root(ROOT)
 ENV = ROOT / ".env"
-OUT = ROOT / "_qa_score_report.json"
+OUT = ROOT / "qa" / "reports" / "score_report.json"
+OUT.parent.mkdir(parents=True, exist_ok=True)
 
 SCORE_PROMPT = """너는 노인·중장년 세대를 대상으로 한 보이스피싱·스미싱 문자 진위 확인 도우미다.
 사용자가 붙여넣은 문자를 실제로 읽고, 그 문자 안에 "실제로 존재하는" 내용만 근거로 삼아라. 입력에 없는 링크·계좌요구·문구를 있다고 지어내는 것은 절대 금지다.
@@ -195,7 +212,7 @@ def eval_case(case: dict, parsed: dict) -> dict:
 
 def nim_crosscheck(rows: list[dict]) -> dict | None:
     try:
-        sys.path.insert(0, str(ROOT.parents[1] / "scripts"))
+        sys.path.insert(0, str(PIPELINE_ROOT / "scripts"))
         import nvidia_nim_client  # type: ignore
     except Exception as e:
         return {"skipped": True, "reason": f"import_fail:{e}"}

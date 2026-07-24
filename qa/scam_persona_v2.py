@@ -20,8 +20,19 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+
+def project_root() -> Path:
+    here = Path(__file__).resolve().parent
+    for candidate in [here, *here.parents]:
+        if (candidate / "api" / "analyze.js").exists() and (candidate / "index.html").exists():
+            return candidate
+    raise RuntimeError("anshim-check project root not found")
+
+
 ANALYZE_URL = "http://127.0.0.1:3215/api/analyze"
-OUT = Path(__file__).resolve().parent / "_qa_scam_persona_report.json"
+PROJECT_ROOT = project_root()
+OUT = PROJECT_ROOT / "qa" / "reports" / "scam_persona_report.json"
+OUT.parent.mkdir(parents=True, exist_ok=True)
 
 # 검색으로 확인된 대표 수법을 바탕으로 '창의적 변형' 본문 (더미 URL/번호만)
 CASES = [
